@@ -9,6 +9,7 @@ const SignUp = () => {
     username: "",
     email: "",
     password: "",
+    confirmPassword: ""
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,11 +24,17 @@ const SignUp = () => {
     });
   };
 
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match");
+        setLoading(false);
+        return;
+      }
+
       await signup(formData.fullName, formData.username, formData.email, formData.password);
       navigate('/dashboard'); // Navigate to dashboard on success
     } catch (error) {
@@ -104,6 +111,21 @@ const SignUp = () => {
               name="password"
               placeholder="********"
               value={formData.password}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              disabled={loading}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="********"
+              value={formData.confirmPassword}
               onChange={handleChange}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
