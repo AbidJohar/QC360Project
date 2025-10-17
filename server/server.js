@@ -3,7 +3,7 @@ import express from 'express';
 import authRoutes from './routes/authRoutes.js';
 import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
-
+import cors from 'cors';
 dotenv.config();
 
 //__________( connecting database )__________
@@ -15,6 +15,9 @@ const PORT = process.env.PORT || 4000;
 
 //___________( Middlewares )_______________
 
+app.use(cors({
+    origin:['http://localhost:5173']
+}));
 app.use(express.json());
 app.use(cookieParser());
 

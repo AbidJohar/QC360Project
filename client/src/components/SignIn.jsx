@@ -1,10 +1,15 @@
 import React, { useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 const Login = () => {
   const [formData, setFormData] = useState({
     emailOrUsername: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const {signin}  = useContext(AuthContext)
 
   const handleChange = (e) => {
     setFormData({
@@ -13,9 +18,19 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Login submitted:", formData);
+  const handleSubmit = async (e) => {
+   e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await signin(formData.emailOrUsername, formData.password);
+      return true;
+    } catch (error) {
+      setError(error.message || "Signup failed. Please try again.");
+      console.log("Error in signup function:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,7 +39,11 @@ const Login = () => {
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
           Welcome Back
         </h2>
-
+            {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -32,7 +51,7 @@ const Login = () => {
             </label>
             <input
               type="text"
-              name="text"
+              name="emailOrUsername"
               placeholder="username or email"
               value={formData.emailOrUsername}
               onChange={handleChange}
@@ -60,7 +79,7 @@ const Login = () => {
             type="submit"
             className="w-full bg-amber-500 hover:bg-amber-600 text-white rounded-full py-2 "
           >
-            Login
+            {loading ? "login..." : "Login"}
           </button>
         </form>
 

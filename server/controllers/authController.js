@@ -49,9 +49,22 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
+     // generate acessToke
+    const token = jwt.sign(
+      {
+        userId: newUser._id,
+        email: newUser.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      }
+    );
+
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+      accessToken : token,
       user: {
         _id: newUser._id,
         fullName: newUser.fullName,
@@ -116,13 +129,7 @@ export const signIn = async (req, res) => {
       }
     );
 
-    // Set Cookie securely
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ( true in production )
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 2000, // 2 day
-    });
+     
 
     return res.status(200).json({
       success: true,
