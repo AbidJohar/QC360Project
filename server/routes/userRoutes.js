@@ -5,8 +5,8 @@ import authMiddleware from '../middlewares/authMiddleware.js';
 const userRoutes = Router();
 
 userRoutes.get('/get-Profile', authMiddleware ,getProfile);
-userRoutes.get('/update-Profile', authMiddleware ,updateProfile);
-userRoutes.get('/change-password', authMiddleware ,changePassword);
+userRoutes.put('/update-Profile', authMiddleware ,updateProfile);
+userRoutes.put('/change-password', authMiddleware ,changePassword);
 
 
 

@@ -1,7 +1,7 @@
 import express from 'express';
-import { adminMiddleware } from '../middlewares/adminMiddleware';
-import { getALlUsersByAdmin, updateUserByAdmin,deleteUserByAdmin } from '../controllers/adminController';
-
+ 
+import { getALlUsersByAdmin, updateUserByAdmin,deleteUserByAdmin } from '../controllers/adminController.js';
+import { adminMiddleware } from '../middlewares/adminMiddleware.js';
 
 const adminRoutes = express.Router();
 
