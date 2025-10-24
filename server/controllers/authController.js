@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, username, email, password } = req.body;
+    const { fullName, username, email, password, role } = req.body;
 
     // Basic validation
     if (!fullName || !username || !email || !password) {
@@ -47,6 +47,7 @@ export const signup = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      role
     });
 
      // generate acessToke
@@ -54,6 +55,7 @@ export const signup = async (req, res) => {
       {
         userId: newUser._id,
         email: newUser.email,
+        role: newUser.role
       },
       process.env.JWT_SECRET,
       {
@@ -122,6 +124,7 @@ export const signIn = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
+        role: user.role
       },
       process.env.JWT_SECRET,
       {
@@ -129,18 +132,10 @@ export const signIn = async (req, res) => {
       }
     );
 
-     
-
     return res.status(200).json({
       success: true,
       message: "Login successful",
       accessToken : token,
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        username: user.username,
-        email: user.email,
-      },
     });
   } catch (error) {
     console.log("Error in signIn controller:", error);

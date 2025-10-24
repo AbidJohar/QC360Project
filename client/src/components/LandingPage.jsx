@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const LandingPage = () => {
   const { user, isAuthenticated, loading, logout } = useContext(AuthContext);
@@ -9,7 +9,7 @@ const LandingPage = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login'); // Redirect to login after logout
+    navigate("/login"); // Redirect to login after logout
   };
 
   if (loading) {
@@ -25,7 +25,7 @@ const LandingPage = () => {
       {isAuthenticated ? (
         <>
           <h1 className="text-4xl font-bold mb-4">
-            Welcome back, {user?.fullName || 'User'}!
+            Welcome back, {user?.fullName || "User"}!
           </h1>
           <p className="text-lg mb-2">Username: {user?.username}</p>
           <p className="text-lg mb-6">Email: {user?.email}</p>
@@ -38,11 +38,10 @@ const LandingPage = () => {
         </>
       ) : (
         <>
-          <h1 className="text-4xl font-bold mb-4">
-            Welcome to QC360 Project
-          </h1>
+          <h1 className="text-4xl font-bold mb-4">Welcome to QC360 Project</h1>
           <p className="text-lg mb-6 max-w-xl">
-            Join us today and explore awesome features designed to make your experience impressive and powerful.
+            Join us today and explore awesome features designed to make your
+            experience impressive and powerful.
           </p>
           <Link
             to="/signup"

@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   console.log("IsAuthenticated in context:",isAuthenticated);
   
 
-  // Check for existing token on mount
+  // Check for existing token 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const savedUser = localStorage.getItem('user');
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Signup function
+  //____________________( Signup function )_______________________
   const signup = async (fullName, username, email, password) => {
     try {
       const response = await axios.post(`${base_url}/api/auth/sign-up`, {
@@ -43,8 +43,9 @@ export const AuthProvider = ({ children }) => {
       throw new Error(error.response?.data?.message || 'Signup failed');
     }
   };
+  
+//____________________( SignIn function )_______________________
 
-  // Signin function
   const signin = async (emailOrUsername, password) => {
     try {
       const response = await axios.post(`${base_url}/api/auth/sign-in`, {
