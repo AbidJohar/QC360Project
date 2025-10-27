@@ -7,7 +7,7 @@ const adminRoutes = express.Router();
 
 
 
-adminRoutes.post('/users', adminMiddleware, getALlUsersByAdmin);
+adminRoutes.get('/users', adminMiddleware, getALlUsersByAdmin);
 adminRoutes.put('/update-user/:id', adminMiddleware, updateUserByAdmin);
 adminRoutes.delete('/delete-user/:id', adminMiddleware, deleteUserByAdmin);
 

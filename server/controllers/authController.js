@@ -6,10 +6,10 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, username, email, password, role } = req.body;
+    const { fullName, email, password, role } = req.body;
 
     // Basic validation
-    if (!fullName || !username || !email || !password) {
+    if (!fullName  || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -17,17 +17,12 @@ export const signup = async (req, res) => {
     }
 
     // Check if email OR username exists in one query
-    const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
-    });
+    const existingUser = await User.findOne({email});
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message:
-          existingUser.email === email
-            ? "Email is already registered"
-            : "Username is already taken",
+        message: "Email is already registered"
       });
     }
 
@@ -44,7 +39,6 @@ export const signup = async (req, res) => {
     // Save user
     const newUser = await User.create({
       fullName,
-      username,
       email,
       password: hashedPassword,
       role
@@ -70,7 +64,6 @@ export const signup = async (req, res) => {
       user: {
         _id: newUser._id,
         fullName: newUser.fullName,
-        username: newUser.username,
         email: newUser.email,
       },
     });
@@ -87,20 +80,18 @@ export const signup = async (req, res) => {
 
 export const signIn = async (req, res) => {
   try {
-    const { emailOrUsername, password } = req.body;
+    const { email, password } = req.body;
 
     // Validate fields
-    if (!emailOrUsername || !password) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: "Email/Username and password are required",
+        message: "Email and password are required",
       });
     }
 
     // Find user by email or username
-    const user = await User.findOne({
-      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
-    });
+    const user = await User.findOne( {email});
 
     if (!user) {
       return res.status(404).json({

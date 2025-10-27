@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import { User } from "../models/User.js";
 
 export const adminMiddleware = async (req, res, next) => {
@@ -17,8 +17,12 @@ export const adminMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await User.findById(decoded.id);
 
+    console.log("user value after decode:",decoded);
+
+    const user = await User.findById(decoded.userId);
+    console.log("User value in admin Middleware:",user);
+    
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -26,7 +30,7 @@ export const adminMiddleware = async (req, res, next) => {
       });
     }
 
-    if (user.role !== "admin") {
+    if (user.role !== "Admin") {
       return res.status(403).json({
         success: false,
         message: "Access denied. Admins only.",
