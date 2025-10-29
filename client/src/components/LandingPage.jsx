@@ -27,7 +27,6 @@ const LandingPage = () => {
           <h1 className="text-4xl font-bold mb-4">
             Welcome back, {user?.fullName || "User"}!
           </h1>
-          <p className="text-lg mb-2">Username: {user?.username}</p>
           <p className="text-lg mb-6">Email: {user?.email}</p>
           <button
             onClick={handleLogout}

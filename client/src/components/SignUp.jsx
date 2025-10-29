@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 const SignUp = () => {
   const [formData, setFormData] = useState({
     fullName: "",
-    username: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
+    role : "Employee"
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -35,7 +35,13 @@ const SignUp = () => {
         return;
       }
 
-      await signup(formData.fullName, formData.username, formData.email, formData.password);
+           if (!formData.role) {
+        setError("Please select a role");
+        setLoading(false);
+        return;
+      }
+
+      await signup(formData.fullName, formData.email, formData.password, formData.role);
       navigate('/dashboard'); // Navigate to dashboard on success
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
@@ -72,21 +78,7 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
-            <input
-              type="text"
-              name="username"  
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              required
-              disabled={loading}
-            />
-          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -131,6 +123,22 @@ const SignUp = () => {
               required
               disabled={loading}
             />
+          </div>
+            {/* Role */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Role
+            </label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+              disabled={loading}
+            >
+              <option value="Employee">Employee</option>
+              <option value="Admin">Admin</option>
+            </select>
           </div>
           <button
             type="submit"

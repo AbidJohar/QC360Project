@@ -9,20 +9,38 @@ export const signup = async (req, res) => {
     const { fullName, email, password, role } = req.body;
 
     // Basic validation
-    if (!fullName  || !email || !password) {
+    if (!fullName || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
+    const fullNameRegex = /^[A-Za-z\s]+$/;
+
+    if (!fullNameRegex.test(fullName)) {
+      return res.status(400).json({
+        success: false,
+        message: "Full name should contain only letters",
+      });
+    }
+
+    const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+
+    if (!gmailRegex.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid Gmail address",
+      });
+    }
+
     // Check if email OR username exists in one query
-    const existingUser = await User.findOne({email});
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "Email is already registered"
+        message: "Email is already registered",
       });
     }
 
@@ -41,15 +59,15 @@ export const signup = async (req, res) => {
       fullName,
       email,
       password: hashedPassword,
-      role
+      role,
     });
 
-     // generate acessToke
+    // generate acessToke
     const token = jwt.sign(
       {
         userId: newUser._id,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
       },
       process.env.JWT_SECRET,
       {
@@ -60,7 +78,7 @@ export const signup = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
-      accessToken : token,
+      accessToken: token,
       user: {
         _id: newUser._id,
         fullName: newUser.fullName,
@@ -79,8 +97,12 @@ export const signup = async (req, res) => {
 //________________( Sign In Controller )___________________
 
 export const signIn = async (req, res) => {
+  console.log("Sgin In is hitting....");
+
   try {
     const { email, password } = req.body;
+
+    console.log("email and password", email, password);
 
     // Validate fields
     if (!email || !password) {
@@ -91,7 +113,7 @@ export const signIn = async (req, res) => {
     }
 
     // Find user by email or username
-    const user = await User.findOne( {email});
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
@@ -115,7 +137,7 @@ export const signIn = async (req, res) => {
       {
         userId: user._id,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -126,7 +148,8 @@ export const signIn = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      accessToken : token,
+      accessToken: token,
+      user,
     });
   } catch (error) {
     console.log("Error in signIn controller:", error);

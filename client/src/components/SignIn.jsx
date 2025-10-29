@@ -4,7 +4,7 @@ import { useContext } from "react";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    emailOrUsername: "",
+    email: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -23,7 +23,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      await signin(formData.emailOrUsername, formData.password);
+      await signin(formData.email, formData.password);
       return true;
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
@@ -51,9 +51,9 @@ const Login = () => {
             </label>
             <input
               type="text"
-              name="emailOrUsername"
-              placeholder="username or email"
-              value={formData.emailOrUsername}
+              name="email"
+              placeholder="email"
+              value={formData.email}
               onChange={handleChange}
               className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               required
