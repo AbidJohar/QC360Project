@@ -36,7 +36,14 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { email } = req.user;
-    const { fullName } = req.body;
+    const { username } = req.body;
+
+    if(!username){
+      return res.status(404).json({
+        success: false,
+        message: "username is required"
+      })
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -46,7 +53,7 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    if (fullName) user.fullName = fullName;
+    if (username) user.username = username;
 
     await user.save();
 
@@ -54,7 +61,7 @@ const updateProfile = async (req, res) => {
       success: true,
       message: "Profile updated successfully",
       data: {
-        fullName: user.fullName,
+        fullName: user.username,
       },
     });
   } catch (error) {

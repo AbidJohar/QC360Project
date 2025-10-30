@@ -5,10 +5,8 @@ import { adminMiddleware } from '../middlewares/adminMiddleware.js';
 
 const adminRoutes = express.Router();
 
-
-
 adminRoutes.get('/users', adminMiddleware, getALlUsersByAdmin);
-adminRoutes.put('/update-user/:id', adminMiddleware, updateUserByAdmin);
-adminRoutes.delete('/delete-user/:id', adminMiddleware, deleteUserByAdmin);
+adminRoutes.put('/users/:id', adminMiddleware, updateUserByAdmin);
+adminRoutes.delete('/users/:id', adminMiddleware, deleteUserByAdmin);
 
 export default adminRoutes;

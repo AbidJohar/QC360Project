@@ -6,10 +6,10 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, email, password, role } = req.body;
+    const { fullName, email,username, password, role } = req.body;
 
     // Basic validation
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !username) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -57,6 +57,7 @@ export const signup = async (req, res) => {
     // Save user
     const newUser = await User.create({
       fullName,
+      username,
       email,
       password: hashedPassword,
       role,
@@ -82,6 +83,7 @@ export const signup = async (req, res) => {
       user: {
         _id: newUser._id,
         fullName: newUser.fullName,
+        username : newUser.username,
         email: newUser.email,
       },
     });
@@ -135,7 +137,7 @@ export const signIn = async (req, res) => {
     // generate acessToke
     const token = jwt.sign(
       {
-        userId: user._id,
+        _id: user._id,
         email: user.email,
         role: user.role,
       },

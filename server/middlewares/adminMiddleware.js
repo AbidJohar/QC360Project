@@ -20,7 +20,7 @@ export const adminMiddleware = async (req, res, next) => {
 
     console.log("user value after decode:",decoded);
 
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded._id);
     console.log("User value in admin Middleware:",user);
     
     if (!user) {
