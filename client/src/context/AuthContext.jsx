@@ -25,10 +25,11 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   //____________________( Signup function )_______________________
-  const signup = async (fullName, email, password, role) => {
+  const signup = async (fullName,username, email, password, role) => {
     try {
       const response = await axios.post(`${base_url}/api/auth/sign-up`, {
         fullName,
+        username,
         email,
         password,
         role
