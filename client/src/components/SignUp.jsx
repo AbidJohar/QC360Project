@@ -1,16 +1,17 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     fullName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role : "Employee"
+    role: "Employee",
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -18,9 +19,9 @@ const SignUp = () => {
   const { signup } = useContext(AuthContext);
 
   const handleChange = (e) => {
-    setFormData({ 
-      ...formData, 
-      [e.target.name]: e.target.value 
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -28,6 +29,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
@@ -35,17 +37,24 @@ const SignUp = () => {
         return;
       }
 
-           if (!formData.role) {
+      if (!formData.role) {
         setError("Please select a role");
         setLoading(false);
         return;
       }
 
-      await signup(formData.fullName, formData.email, formData.password, formData.role);
-      navigate('/dashboard'); // Navigate to dashboard on success
+      await signup(
+        formData.fullName,
+        formData.username,
+        formData.email,
+        formData.password,
+        formData.role
+      );
+
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
-      console.log("Error in signup function:", error);
+      console.error("Error in signup function:", error);
     } finally {
       setLoading(false);
     }
@@ -57,12 +66,15 @@ const SignUp = () => {
         <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
           Create an Account
         </h2>
+
         {error && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
             {error}
           </div>
         )}
+
         <form onSubmit={handleSubmit} className="space-y-3">
+          {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Full Name
@@ -79,6 +91,24 @@ const SignUp = () => {
             />
           </div>
 
+          {/* Username */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Username
+            </label>
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter a unique username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
+              disabled={loading}
+            />
+          </div>
+
+          {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -94,6 +124,8 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
+
+          {/* Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -109,6 +141,8 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
+
+          {/* Confirm Password */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirm Password
@@ -124,7 +158,8 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
-            {/* Role */}
+
+          {/* Role */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Role
@@ -140,6 +175,8 @@ const SignUp = () => {
               <option value="Admin">Admin</option>
             </select>
           </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-amber-500 hover:bg-amber-600 text-white mt-5 rounded-full py-2 disabled:opacity-50"
@@ -148,6 +185,7 @@ const SignUp = () => {
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
+
         <p className="text-sm text-gray-600 text-center mt-2">
           Already have an account?{" "}
           <Link to="/login" className="text-blue-600 hover:underline">
