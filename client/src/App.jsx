@@ -7,7 +7,6 @@ import Dashboard from './components/Dashboard';
 import Home from './components/LandingPage';
 import './index.css';
 
-// ProtectedRoute for authenticated users only
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
   console.log("isAuthenticated",isAuthenticated);
@@ -23,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-// PublicRoute for unauthenticated users only
+
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
 
