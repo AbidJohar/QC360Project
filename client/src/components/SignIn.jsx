@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 
-const Login = () => {
+export default function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -94,4 +94,3 @@ const Login = () => {
   );
 };
 
-export default Login;

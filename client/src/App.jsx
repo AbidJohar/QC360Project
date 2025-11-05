@@ -4,8 +4,10 @@ import { useContext } from 'react';
 import SignUp from './components/SignUp';
 import Login from './components/SignIn';
 import Dashboard from './components/Dashboard';
-import Home from './components/LandingPage';
+import LandingPage from './components/LandingPage';
 import './index.css';
+import ChangePassword from './components/ChangePassword';
+
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
@@ -42,7 +44,8 @@ function App() {
    
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<ChangePassword />} />
             <Route
               path="/signup"
               element={
@@ -67,6 +70,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+          
           </Routes>
         </Router>
   );

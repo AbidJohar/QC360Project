@@ -1,9 +1,8 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
-const LandingPage = () => {
+export default function LandingPage() {
   const { user, isAuthenticated, loading, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -60,4 +59,3 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
