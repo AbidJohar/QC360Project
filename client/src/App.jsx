@@ -5,8 +5,9 @@ import SignUp from './components/SignUp';
 import Login from './components/SignIn';
 import Dashboard from './components/Dashboard';
 import LandingPage from './components/LandingPage';
-import './index.css';
-import ChangePassword from './components/ChangePassword';
+import './styles/global.css';
+import Profile from './components/Profile';
+
 
 
 const ProtectedRoute = ({ children }) => {
@@ -45,7 +46,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/" element={<ChangePassword />} />
+            <Route path="/profile" element={<Profile />} />
             <Route
               path="/signup"
               element={
