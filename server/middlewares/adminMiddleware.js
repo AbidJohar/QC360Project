@@ -1,7 +1,7 @@
 import jwt, { decode } from "jsonwebtoken";
 import { User } from "../models/User.js";
 
-export const adminMiddleware = async (req, res, next) => {
+const adminMiddleware = async (req, res, next) => {
   try {
     // 1️⃣ Extract token from Authorization header
     const authHeader = req.headers.authorization;
@@ -18,17 +18,33 @@ export const adminMiddleware = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
 
-    console.log("user value after decode:",decoded);
-
-    const user = await User.findById(decoded._id);
-    console.log("User value in admin Middleware:",user);
+    const user = await User.findById(decoded.userId);
     
-    if (!user) {
-      return res.status(404).json({
+  if (!user || user.currentToken !== token) {
+      return res.status(401).json({
         success: false,
-        message: "User not found",
+        message: "Invalid or expired token",
       });
     }
+
+    // Check inactivity timeout (10 minutes = 600000 ms)
+    const now = Date.now();
+    if (now - user.lastActivity.getTime() > 600000) {
+      user.currentToken = null; // force logout
+      await user.save();
+      return res.status(401).json({
+        success : false,
+        message: "Session expired due to inactivity",
+      });
+    }
+
+    // Update last activity time
+    console.log("last activity time before update: ",user.lastActivity);
+    
+    user.lastActivity = new Date();
+    console.log("last activity time after update: ",user.lastActivity);
+
+    await user.save();
 
     if (user.role !== "Admin") {
       return res.status(403).json({
@@ -47,3 +63,5 @@ export const adminMiddleware = async (req, res, next) => {
     });
   }
 };
+
+export default adminMiddleware;

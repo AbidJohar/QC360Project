@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 export const signup = async (req, res) => {
   try {
-    const { fullName, email,username, password, role } = req.body;
+    const { fullName, email, username, password, role } = req.body;
 
     // Basic validation
     if (!fullName || !email || !password || !username) {
@@ -64,17 +64,21 @@ export const signup = async (req, res) => {
     });
 
     // generate acessToke
+    // generate acessToke
+
     const token = jwt.sign(
-      {
+      { 
         userId: newUser._id,
-        email: newUser.email,
-        role: newUser.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      }
+         email: newUser.email,
+          role: newUser.role
+       },
+      process.env.JWT_SECRET
     );
+
+    // Store token + activity time
+    newUser.currentToken = token;
+    newUser.lastActivity = new Date();
+    await newUser.save();
 
     return res.status(201).json({
       success: true,
@@ -83,7 +87,7 @@ export const signup = async (req, res) => {
       user: {
         _id: newUser._id,
         fullName: newUser.fullName,
-        username : newUser.username,
+        username: newUser.username,
         email: newUser.email,
       },
     });
@@ -135,23 +139,31 @@ export const signIn = async (req, res) => {
     }
 
     // generate acessToke
+
     const token = jwt.sign(
-      {
-        _id: user._id,
-        email: user.email,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      }
+      { 
+        userId: user._id,
+         email: user.email,
+          role: user.role
+       },
+      process.env.JWT_SECRET
     );
 
+    // Store token + activity time
+    user.currentToken = token;
+    user.lastActivity = new Date();
+    await user.save();
+
     return res.status(200).json({
-      success: true,
-      message: "Login successful",
+       success: true,
+      message: "User login successfully",
       accessToken: token,
-      user,
+      user: {
+        _id: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        email: user.email,
+      },
     });
   } catch (error) {
     console.log("Error in signIn controller:", error);
@@ -159,5 +171,24 @@ export const signIn = async (req, res) => {
       success: false,
       message: "Internal server error",
     });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(400).json({ message: "Token missing" });
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId);
+
+    user.currentToken = null; // invalidate token
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong" });
   }
 };
