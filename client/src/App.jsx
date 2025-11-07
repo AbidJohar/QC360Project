@@ -7,6 +7,8 @@ import Dashboard from './components/Dashboard';
 import LandingPage from './components/LandingPage';
 import './styles/global.css';
 import Profile from './components/Profile';
+import ChangePassword from './components/changePassword';
+
 
 
 
@@ -46,7 +48,6 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/profile" element={<Profile />} />
             <Route
               path="/signup"
               element={
@@ -71,6 +72,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+              <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                    } />
+              <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <ChangePassword />
+                  </ProtectedRoute>
+                    } />
           
           </Routes>
         </Router>

@@ -55,3 +55,65 @@
 .btn_primary:hover {
   background-color: #0056b3;
 }
+
+.navbar_container{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1366px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  background-color: #ffffff;
+  gap: 16px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+}
+
+.navbar_logo{
+  font-weight: 900;
+  color: black;
+  font-size: 24px;
+}
+
+.navbar_links{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+} 
+
+.navbar_links a{
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.navbar_links a:hover{
+  background-color: rgba(0,0,0,0.04);
+}
+
+.navbar_buttons{
+  display: flex;
+  gap: 10px;
+}
+
+.signin_btn, .signup_btn{
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.signin_btn{
+  background: transparent;
+  color: #333;
+}
+
+.signup_btn{
+  background: #d1990b;
+  color: #fff;
+}
+
+.signup_btn:hover{ background: #0056b3 }

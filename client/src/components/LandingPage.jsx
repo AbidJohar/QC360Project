@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import Navbar from "./Navbar";
 
 export default function LandingPage() {
   const { user, isAuthenticated, loading, logout } = useContext(AuthContext);
@@ -20,6 +21,9 @@ export default function LandingPage() {
   }
 
   return (
+    <>
+    <Navbar />
+
     <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-r from-gray-200 to-gray-100 text-black/70 px-6">
       {isAuthenticated ? (
         <>
@@ -41,21 +45,10 @@ export default function LandingPage() {
             Join us today and explore awesome features designed to make your
             experience impressive and powerful.
           </p>
-          <Link
-            to="/signup"
-            className="bg-amber-500 hover:bg-amber-700 text-white font-semibold px-8 mb-3 py-3 rounded-full shadow-md transition"
-          >
-            Sign Up
-          </Link>
-          <Link
-            to="/login"
-            className="bg-amber-500 hover:bg-amber-700 text-white font-semibold px-8 py-3 rounded-full shadow-md transition"
-          >
-            Sign In
-          </Link>
         </>
       )}
     </div>
+    </>
   );
 };
 

@@ -18,7 +18,6 @@ export default function Profile() {
   return (
    <div className="profile_container">
       <h2>My Profile</h2>
-
       <form className="profile_form" onSubmit={handleSubmit}>
         <div className="form_group">
           <label>Full Name</label>
