@@ -1,29 +1,34 @@
+
 import { Link } from "react-router-dom";
+
 
 export default function Dashboard() {
   return (
-     <>
-      <h2 className="font-bold text-2xl">welcome to the dashboard</h2>
-      <Link
-        to={"/"}
-         className="px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-500 text-white font-bold"
-       >
-         Back to Home page
-       </Link>
-      <Link
-        to={"/profile"}
-         className=""
-       >
-       Profile
-       </Link>
-      <Link
-        to={"/changePassword"}
-         className="bg-white rounded-2xl text-black"
-       >
-        Change Password
-       </Link>
-     </>
-    
+    <div className="dashboard_container">
+      <div className="dashboard_box">
+        <h2 className="dashboard_title">Welcome to the Dashboard 🎉</h2>
 
-  )
+        <p className="dashboard_subtext">
+          Manage your profile, change your password, or head back home.
+        </p>
+
+        <div className="dashboard_links">
+          <Link to="/" className="dashboard_button dashboard_home">
+            🏠 Back to Home
+          </Link>
+
+          <Link to="/profile" className="dashboard_button dashboard_profile">
+            👤 Profile
+          </Link>
+
+          <Link
+            to="/changePassword"
+            className="dashboard_button dashboard_change_password"
+          >
+            🔑 Change Password
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
