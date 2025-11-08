@@ -23,7 +23,6 @@
   margin-bottom: 0.25rem;
 }
 
-
 .profile_subtitle {
   text-align: center;
   color: #000000;
@@ -33,9 +32,7 @@
 .profile_form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
 }
-
 
 .form_group {
   display: flex;

@@ -10,10 +10,8 @@ import Profile from './components/Profile';
 import ChangePassword from './components/changePassword';
 
 
-
-
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated, loading, } = useContext(AuthContext);
   console.log("isAuthenticated",isAuthenticated);
   
   if (loading) {
@@ -77,7 +75,7 @@ function App() {
                     <Profile />
                   </ProtectedRoute>
                     } />
-              <Route path="/profile" element={
+              <Route path="/changePassword" element={
                   <ProtectedRoute>
                     <ChangePassword />
                   </ProtectedRoute>

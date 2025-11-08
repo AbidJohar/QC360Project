@@ -1,16 +1,11 @@
-import { Link, useNavigate } from "react-router-dom";
+
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "./Navbar";
 
 export default function LandingPage() {
   const { user, isAuthenticated, loading, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
 
   if (loading) {
     return (
@@ -31,12 +26,7 @@ export default function LandingPage() {
             Welcome back, {user?.fullName || "User"}!
           </h1>
           <p className="text-lg mb-6">Email: {user?.email}</p>
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full shadow-md transition"
-          >
-            Logout
-          </button>
+        
         </>
       ) : (
         <>
