@@ -1,6 +1,7 @@
 import  { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/signIn.css"
 
 export default function Login() {
@@ -10,7 +11,8 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const {signin}  = useContext(AuthContext)
+  const { signin, user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -20,11 +22,21 @@ export default function Login() {
   };
 
   const handleSubmit = async (e) => {
-   e.preventDefault();
+    e.preventDefault();
     setError("");
     setLoading(true);
     try {
       await signin(formData.email, formData.password);
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
+      console.log("Logged in user:", loggedInUser);
+      console.log("User role:", loggedInUser?.role);
+      if (loggedInUser && loggedInUser.role === "Admin") {
+        console.log("Redirecting to admin");
+        navigate("/admin");
+      } else {
+        console.log("Redirecting to home");
+        navigate("/");
+      }
       return true;
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");

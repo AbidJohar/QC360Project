@@ -30,7 +30,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     try {
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
@@ -52,10 +52,15 @@ const SignUp = () => {
         formData.role
       );
 
-      navigate("/dashboard");
+      // If user signed up as Admin, send to admin screen, otherwise regular dashboard
+      if (formData.role === 'Admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
-      console.error("Error in signup function:", error);
+     
     } finally {
       setLoading(false);
     }
@@ -74,9 +79,9 @@ const SignUp = () => {
             <label className="form_label">Full Name</label>
             <input
               type="text"
-              name="full_name"
+              name="fullName"
               placeholder="Enter your full name"
-              value={formData.full_name}
+              value={formData.fullName}
               onChange={handleChange}
               className="form_input"
               required
@@ -89,9 +94,9 @@ const SignUp = () => {
             <label className="form_label">Username</label>
             <input
               type="text"
-              name="user_name"
+              name="username"
               placeholder="Enter a unique username"
-              value={formData.user_name}
+              value={formData.username}
               onChange={handleChange}
               className="form_input"
               required
@@ -131,9 +136,9 @@ const SignUp = () => {
             <label className="form_label">Confirm Password</label>
             <input
               type="password"
-              name="confirm_password"
+              name="confirmPassword"
               placeholder="********"
-              value={formData.confirm_password}
+              value={formData.confirmPassword}
               onChange={handleChange}
               className="form_input"
               required

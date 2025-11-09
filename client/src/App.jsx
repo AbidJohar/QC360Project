@@ -8,6 +8,7 @@ import LandingPage from './components/LandingPage';
 import './styles/global.css';
 import Profile from './components/Profile';
 import ChangePassword from './components/changePassword';
+import AdminLayout from './components/admin/AdminLayout';
 
 
 const ProtectedRoute = ({ children }) => {
@@ -28,6 +29,7 @@ const ProtectedRoute = ({ children }) => {
 
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   if (loading) {
     return (
@@ -37,7 +39,14 @@ const PublicRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+  if (isAuthenticated) {
+    if (user && user.role === "Admin") {
+      return <Navigate to="/admin" replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 function App() {
@@ -78,6 +87,11 @@ function App() {
               <Route path="/changePassword" element={
                   <ProtectedRoute>
                     <ChangePassword />
+                  </ProtectedRoute>
+                    } />
+              <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <AdminLayout />
                   </ProtectedRoute>
                     } />
           

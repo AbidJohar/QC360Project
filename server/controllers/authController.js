@@ -89,6 +89,7 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         username: newUser.username,
         email: newUser.email,
+        role: newUser.role
       },
     });
   } catch (error) {
@@ -163,6 +164,7 @@ export const signIn = async (req, res) => {
         fullName: user.fullName,
         username: user.username,
         email: user.email,
+        role: user.role
       },
     });
   } catch (error) {
