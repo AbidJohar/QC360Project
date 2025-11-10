@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import { AuthContext } from '../../context/AuthContext';
+import "../../styles/admin.css"
 
 export default function AdminLayout() {
   const navigate = useNavigate();
