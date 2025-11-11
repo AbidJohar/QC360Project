@@ -54,7 +54,7 @@ export default function Login() {
         {error && <div className="error_message">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login_form">
-          <div className="form-group">
+          <div className="form_group">
             <label className="form_label">Email Address</label>
             <input
               type="text"

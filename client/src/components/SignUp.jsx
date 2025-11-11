@@ -117,7 +117,7 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
-
+          
           <div className="form_group">
             <label className="form_label">Password</label>
             <input
