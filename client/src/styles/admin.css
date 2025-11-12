@@ -72,8 +72,6 @@
   cursor: pointer;
   font-size: 18px;
 }
-
-/* ensure toggle button stays visible when collapsed and title hides */
 .sidebar-title {
   font-size: 18px;
   font-weight: 600;
@@ -96,7 +94,6 @@
   background: rgba(255,255,255,0.06);
 }
 
-/* Collapse behavior */
 .sidebar.collapsed .menu-title {
   opacity: 0;
   pointer-events: none;
@@ -145,7 +142,6 @@
   background-color: #0059b3;
 }
 
-/* when collapsed — center icons, hide text */
 .sidebar.collapsed .menu-item {
   justify-content: center;
   gap: 0;
@@ -171,4 +167,48 @@
   flex: 1;
   overflow-y: auto;
   transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    height: 100%;
+    left: -240px; 
+    top: 0;
+    width: 240px;
+    transition: left 0.25s ease;
+  }
+
+  .admin-header{
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+
+  .sidebar.expanded,
+  .sidebar.open {
+    left: 0;
+  }
+
+
+  .sidebar.collapsed {
+    left: -70px;
+    width: 70px;
+  }
+
+  .sidebar.expanded ~ .admin-main .admin-content,
+  .sidebar.open ~ .admin-main .admin-content {
+    filter: brightness(0.9);
+    pointer-events: none; 
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 900;
+  }
 }

@@ -1,6 +1,8 @@
 import { useContext, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
+import { FaBars } from 'react-icons/fa';
+import { useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import "../../styles/admin.css"
 
@@ -29,10 +31,18 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-container">
-      <AdminSidebar />
+      <AdminSidebar isOpen={true} />
       <div className="admin-main">
         <header className="admin-header">
-          <h2>Welcome, {adminName}</h2>
+          <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+            <button className="toggle-btn mobile-toggle" onClick={() => {
+              const ev = new CustomEvent('toggle-sidebar');
+              window.dispatchEvent(ev);
+            }} aria-label="Toggle sidebar">
+              <FaBars />
+            </button>
+            <h2>Welcome, {adminName}</h2>
+          </div>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </header>
 

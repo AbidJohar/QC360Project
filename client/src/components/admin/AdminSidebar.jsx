@@ -4,16 +4,22 @@ import { NavLink } from 'react-router-dom';
 import { FaUserCog, FaClipboardList, FaShieldAlt, FaFileAlt, FaBars } from 'react-icons/fa';
 
 
-export default function AdminSidebar() {
-  const [isOpen, setIsOpen] = useState(true);
+export default function AdminSidebar({ isOpen: initialOpen = true }) {
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const [openSection, setOpenSection] = useState(null);
 
     const toggleSection = (section) => {
     setOpenSection(openSection === section ? null : section);
   };
 
+    React.useEffect(() => {
+      const handler = () => setIsOpen((v) => !v);
+      window.addEventListener('toggle-sidebar', handler);
+      return () => window.removeEventListener('toggle-sidebar', handler);
+    }, []);
+
   return (
-    <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`}>
+  <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`}>
       <div className="sidebar-header">
         <h3 className="sidebar-title">Admin Panel</h3>
         <button
