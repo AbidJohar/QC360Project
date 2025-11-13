@@ -1,9 +1,28 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
 
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
+    <>
+      <div className="navbar_container">
+      <div className="navbar_logo">
+       QC360
+      </div>
+     <button
+            onClick={handleLogout}
+            className="logout_btn"
+          >
+            Logout
+          </button>
+      </div>
     <div className="dashboard_container">
       <div className="dashboard_box">
         <h2 className="dashboard_title">Welcome to the Dashboard 🎉</h2>
@@ -30,5 +49,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
