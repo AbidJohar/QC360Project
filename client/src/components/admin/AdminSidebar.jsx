@@ -77,7 +77,7 @@ export default function AdminSidebar({ isOpen: initialOpen = true }) {
                   <FaClipboardList /> Dashboard
                 </NavLink>
                 <NavLink
-                  to="/admin/manage-users"
+                  to="/admin/viewRequests"
                   className="menu-item"
                   onClick={handleNavClick}
                 >
