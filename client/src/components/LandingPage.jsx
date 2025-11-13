@@ -7,6 +7,11 @@ export default function LandingPage() {
   const { user, isAuthenticated, loading, logout } = useContext(AuthContext);
 
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login"); 
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-200 to-gray-100">
