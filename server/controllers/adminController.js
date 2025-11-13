@@ -121,4 +121,13 @@ const deleteUserByAdmin = async (req, res) => {
   }
 };
 
-export { getALlUsersByAdmin, updateUserByAdmin, deleteUserByAdmin };
+//___________( Admin dashboard data for frontend testing )______________
+
+const dashboardData = async (_, res) => {
+     return res.status(200).json({
+      message: "Welcome Admin",
+      stats: {}
+     })
+};
+
+export { getALlUsersByAdmin, updateUserByAdmin, deleteUserByAdmin,dashboardData };

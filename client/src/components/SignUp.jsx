@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/signup.css"
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -14,9 +15,10 @@ const SignUp = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  const { signup } = useContext(AuthContext);
+  const { signup, logout } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({
@@ -29,7 +31,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-
+  
     try {
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
@@ -43,132 +45,124 @@ const SignUp = () => {
         return;
       }
 
-      await signup(
+      const res = await signup(
         formData.fullName,
         formData.username,
         formData.email,
         formData.password,
         formData.role
       );
+      // Show success toast/message and redirect appropriately.
+      setSuccessMessage("Signup successful. Redirecting to login...");
 
-      navigate("/dashboard");
+      if (formData.role === 'Admin') {
+        navigate('/admin');
+        return;
+      }
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 1400);
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
-      console.error("Error in signup function:", error);
+     
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="h-screen flex items-center bg-gradient-to-r from-gray-200 to-gray-100 justify-center px-4">
-      <div className="mt-4 bg-white rounded-xl py-6 px-8 max-w-md w-full">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-4">
-          Create an Account
-        </h2>
+    <div className="sign_up_container">
+      <div className="sign_up_box">
+        <h2 className="sign_up_title">Create an Account</h2>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-            {error}
-          </div>
-        )}
+          {error && <div className="error_message">{error}</div>}
+          {successMessage && (
+            <div className="success_message" style={{background: '#22c55e', color: '#fff', padding: '10px', borderRadius: 6, marginBottom: 12}}>
+              {successMessage}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Full Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Full Name
-            </label>
+        <form onSubmit={handleSubmit} className="sign_up_form">
+          
+          <div className="form_group">
+            <label className="form_label">Full Name</label>
             <input
               type="text"
               name="fullName"
               placeholder="Enter your full name"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="form_input"
               required
               disabled={loading}
             />
           </div>
 
-          {/* Username */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
-            </label>
+      
+          <div className="form_group">
+            <label className="form_label">Username</label>
             <input
               type="text"
               name="username"
               placeholder="Enter a unique username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="form_input"
               required
               disabled={loading}
             />
           </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
-            </label>
+          <div className="form_group">
+            <label className="form_label">Email </label>
             <input
               type="email"
               name="email"
               placeholder="example@mail.com"
               value={formData.email}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="form_input"
               required
               disabled={loading}
             />
           </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Password
-            </label>
+          
+          <div className="form_group">
+            <label className="form_label">Password</label>
             <input
               type="password"
               name="password"
               placeholder="********"
               value={formData.password}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="form_input"
               required
               disabled={loading}
             />
           </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Confirm Password
-            </label>
+          <div className="form_group">
+            <label className="form_label">Confirm Password</label>
             <input
               type="password"
               name="confirmPassword"
               placeholder="********"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="form_input"
               required
               disabled={loading}
             />
           </div>
 
-          {/* Role */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
+          <div className="form_group">
+            <label className="form_label">Role</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+              className="form_select"
               disabled={loading}
             >
               <option value="Employee">Employee</option>
@@ -176,19 +170,18 @@ const SignUp = () => {
             </select>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white mt-5 rounded-full py-2 disabled:opacity-50"
+            className="sign_up_button"
             disabled={loading}
           >
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
-        <p className="text-sm text-gray-600 text-center mt-2">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 hover:underline">
+        <p className="login_text">
+          Already have an account?
+          <Link to="/login" className="login_link">
             Login
           </Link>
         </p>

@@ -4,12 +4,15 @@ import { useContext } from 'react';
 import SignUp from './components/SignUp';
 import Login from './components/SignIn';
 import Dashboard from './components/Dashboard';
-import Home from './components/LandingPage';
-import './index.css';
+import LandingPage from './components/LandingPage';
+import './styles/global.css';
+import Profile from './components/Profile';
+import ChangePassword from './components/changePassword';
+import AdminLayout from './components/admin/AdminLayout';
 
-// ProtectedRoute for authenticated users only
+
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated, loading, } = useContext(AuthContext);
   console.log("isAuthenticated",isAuthenticated);
   
   if (loading) {
@@ -23,9 +26,10 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-// PublicRoute for unauthenticated users only
+
 const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useContext(AuthContext);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   if (loading) {
     return (
@@ -35,7 +39,14 @@ const PublicRoute = ({ children }) => {
     );
   }
 
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
+  if (isAuthenticated) {
+    if (user && user.role === "Admin") {
+      return <Navigate to="/admin" replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
 };
 
 function App() {
@@ -43,7 +54,7 @@ function App() {
    
         <Router>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<LandingPage />} />
             <Route
               path="/signup"
               element={
@@ -68,6 +79,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+              <Route path="/profile" element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                    } />
+              <Route path="/changePassword" element={
+                  <ProtectedRoute>
+                    <ChangePassword />
+                  </ProtectedRoute>
+                    } />
+              <Route path="/admin" element={
+                  <ProtectedRoute>
+                    <AdminLayout />
+                  </ProtectedRoute>
+                    } />
+          
           </Routes>
         </Router>
   );

@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       index: true
     },
-
+    
     password: {
       type: String,
       required: true,
@@ -32,7 +32,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum : ["Admin", "Employee"],
       default : "Employee"
-    }
+    },
+    lastActivity: { type: Date, default: Date.now },
+
+    currentToken: { type: String, default: null }
   },
   { timestamps: true }
 );

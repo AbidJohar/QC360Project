@@ -1,19 +1,77 @@
-import React from "react";
-import { Link } from "react-router-dom";
 
-const Dashboard = () => {
-  
+import { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+
+export default function Dashboard() {
+  const { logout, user } = useContext(AuthContext);
+  const [displayName, setDisplayName] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  useEffect(() => {
+
+    let name;
+    if (user) {
+      name =  user.username || user.email;
+      
+    } else {
+      const saved = localStorage.getItem('user');
+      if (saved) {
+        try {
+          const u = JSON.parse(saved);
+          name = u?.username || u?.email;
+        } catch (e) {
+          name = null;
+        }
+      }
+    }
+
+    setDisplayName(name || 'User');
+  }, [user]);
   return (
-    <div className="flex flex-col gap-8 items-center justify-center min-h-screen ">
-      <h2 className="font-bold text-2xl">welcome to the dashboard</h2>
-      <Link
-        to={"/"}
-        className="px-6 py-2 rounded-full bg-amber-400 hover:bg-amber-500 text-white font-bold"
-      >
-        Back to Home page
-      </Link>
-    </div>
-  );
-};
+    <>
+      <div className="navbar_container">
+      <div className="navbar_logo">
+       QC360
+      </div>
+     <button
+            onClick={handleLogout}
+            className="logout_btn"
+          >
+            Logout
+          </button>
+      </div>
+    <div className="dashboard_container">
+      <div className="dashboard_box">
+        <h2 className="dashboard_title">Welcome, {displayName}</h2>
 
-export default Dashboard;
+        <p className="dashboard_subtext">
+          Manage your profile, change your password, or head back home.
+        </p>
+
+        <div className="dashboard_links">
+          <Link to="/" className="dashboard_button dashboard_home">
+             Back to Home
+          </Link>
+
+          <Link to="/profile" className="dashboard_button dashboard_profile">
+             Profile
+          </Link>
+
+          <Link
+            to="/changePassword"
+            className="dashboard_button dashboard_change_password"
+          >
+             Change Password
+          </Link>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+}

@@ -1,7 +1,6 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -13,13 +12,33 @@ export const AuthProvider = ({ children }) => {
   console.log("IsAuthenticated in context:",isAuthenticated);
   
 
-  // Check for existing token 
+  const logoutTimerRef = useRef(null);
+
+  const clearLogoutTimer = () => {
+    if (logoutTimerRef.current) {
+      console.log('Clearing logout timer');
+      clearTimeout(logoutTimerRef.current);
+      logoutTimerRef.current = null;
+    }
+  };
+
+  const startLogoutTimer = () => {
+    console.log('Starting logout timer for 2 minutes');
+    clearLogoutTimer();
+    logoutTimerRef.current = setTimeout(() => {
+      console.log('Logout timer expired — performing auto-logout');
+      logout(true);
+    }, 10 * 60 * 1000);
+  };
+
+
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     const savedUser = localStorage.getItem('user');
     if (accessToken && savedUser) {
       setUser(JSON.parse(savedUser));
       setIsAuthenticated(true);
+      startLogoutTimer();
     }
     setLoading(false);
   }, []);
@@ -35,11 +54,15 @@ export const AuthProvider = ({ children }) => {
         role
       });
       const { accessToken, user } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-      setIsAuthenticated(true);
-      return true;
+    
+      if (user && user.role === 'Admin') {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(true);
+        startLogoutTimer();
+      }
+      return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Signup failed');
     }
@@ -59,6 +82,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       setIsAuthenticated(true);
+      startLogoutTimer();
       return true;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Signin failed');
@@ -66,12 +90,21 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Logout function
-  const logout = () => {
+  // If `redirect` is true, navigate to the login page after clearing state.
+  const logout = (redirect = false) => {
+    console.log('Logging out. redirect=', redirect);
+    clearLogoutTimer();
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     setUser(null);
     setIsAuthenticated(false);
-    
+    if (redirect) {
+      try {
+        window.location.href = '/login';
+      } catch (e) {
+        console.log('Redirect after logout failed', e);
+      }
+    }
   };
 
   return (
