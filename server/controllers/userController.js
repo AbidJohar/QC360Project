@@ -6,7 +6,6 @@ import bcrypt from "bcrypt";
 const getProfile = async (req, res) => {
   try {
     const { email } = req.user;
-    console.log(`getProfile called for: ${email}`);
 
     const user = await User.findOne({ email }).select("-password"); // exclude password for security
 
@@ -37,14 +36,13 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { email } = req.user;
-    const { username, fullName, email: newEmail } = req.body;
-    console.log(`updateProfile called for: ${email} with body:`, req.body);
+    const { username } = req.body;
 
-    if (!username && !fullName && !newEmail) {
-      return res.status(400).json({
+    if(!username){
+      return res.status(404).json({
         success: false,
-        message: "At least one of username, fullName or email is required",
-      });
+        message: "username is required"
+      })
     }
 
     const user = await User.findOne({ email });
@@ -55,19 +53,16 @@ const updateProfile = async (req, res) => {
       });
     }
 
-    // Update allowed fields
     if (username) user.username = username;
-    if (fullName) user.fullName = fullName;
-    if (newEmail) user.email = newEmail;
 
     await user.save();
 
-    // Return updated user (excluding password)
-    const updated = await User.findById(user._id).select("-password");
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: updated,
+      data: {
+        fullName: user.username,
+      },
     });
   } catch (error) {
     console.error("Error in updateProfile:", error);

@@ -6,7 +6,7 @@ export default function Dashboard() {
   return (
     <div className="dashboard_container">
       <div className="dashboard_box">
-        <h2 className="dashboard_title">Welcome to the Dashboard Employee 🎉</h2>
+        <h2 className="dashboard_title">Welcome to the Dashboard 🎉</h2>
 
         <p className="dashboard_subtext">
           Manage your profile, change your password, or head back home.
