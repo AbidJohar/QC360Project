@@ -1,15 +1,38 @@
 
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
-
+import { AuthContext } from "../context/AuthContext";
 
 export default function Dashboard() {
+  const { logout, user } = useContext(AuthContext);
+  const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
+
+  useEffect(() => {
+
+    let name;
+    if (user) {
+      name =  user.username || user.email;
+      
+    } else {
+      const saved = localStorage.getItem('user');
+      if (saved) {
+        try {
+          const u = JSON.parse(saved);
+          name = u?.username || u?.email;
+        } catch (e) {
+          name = null;
+        }
+      }
+    }
+
+    setDisplayName(name || 'User');
+  }, [user]);
   return (
     <>
       <div className="navbar_container">
@@ -25,7 +48,7 @@ export default function Dashboard() {
       </div>
     <div className="dashboard_container">
       <div className="dashboard_box">
-        <h2 className="dashboard_title">Welcome to the Dashboard 🎉</h2>
+        <h2 className="dashboard_title">Welcome, {displayName}</h2>
 
         <p className="dashboard_subtext">
           Manage your profile, change your password, or head back home.
@@ -33,18 +56,18 @@ export default function Dashboard() {
 
         <div className="dashboard_links">
           <Link to="/" className="dashboard_button dashboard_home">
-            🏠 Back to Home
+             Back to Home
           </Link>
 
           <Link to="/profile" className="dashboard_button dashboard_profile">
-            👤 Profile
+             Profile
           </Link>
 
           <Link
             to="/changePassword"
             className="dashboard_button dashboard_change_password"
           >
-            🔑 Change Password
+             Change Password
           </Link>
         </div>
       </div>

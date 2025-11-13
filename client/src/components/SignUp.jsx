@@ -15,9 +15,10 @@ const SignUp = () => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  const { signup } = useContext(AuthContext);
+  const { signup, logout } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({
@@ -44,20 +45,24 @@ const SignUp = () => {
         return;
       }
 
-      await signup(
+      const res = await signup(
         formData.fullName,
         formData.username,
         formData.email,
         formData.password,
         formData.role
       );
+      // Show success toast/message and redirect appropriately.
+      setSuccessMessage("Signup successful. Redirecting to login...");
 
-      // If user signed up as Admin, send to admin screen, otherwise regular dashboard
       if (formData.role === 'Admin') {
         navigate('/admin');
-      } else {
-        navigate('/dashboard');
+        return;
       }
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 1400);
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
      
@@ -71,7 +76,12 @@ const SignUp = () => {
       <div className="sign_up_box">
         <h2 className="sign_up_title">Create an Account</h2>
 
-        {error && <div className="error_message">{error}</div>}
+          {error && <div className="error_message">{error}</div>}
+          {successMessage && (
+            <div className="success_message" style={{background: '#22c55e', color: '#fff', padding: '10px', borderRadius: 6, marginBottom: 12}}>
+              {successMessage}
+            </div>
+          )}
 
         <form onSubmit={handleSubmit} className="sign_up_form">
           
@@ -105,7 +115,7 @@ const SignUp = () => {
           </div>
 
           <div className="form_group">
-            <label className="form_label">Email Address</label>
+            <label className="form_label">Email </label>
             <input
               type="email"
               name="email"

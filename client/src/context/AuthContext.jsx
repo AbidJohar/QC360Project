@@ -35,11 +35,14 @@ export const AuthProvider = ({ children }) => {
         role
       });
       const { accessToken, user } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
-      setIsAuthenticated(true);
-      return true;
+    
+      if (user && user.role === 'Admin') {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('user', JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(true);
+      }
+      return response.data;
     } catch (error) {
       throw new Error(error.response?.data?.message || 'Signup failed');
     }
