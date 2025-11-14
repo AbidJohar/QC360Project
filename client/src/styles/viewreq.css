@@ -22,6 +22,12 @@
   margin-bottom: 20px;
 }
 
+/* Allow horizontal scrolling on small screens */
+.table_container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table_header {
   display: grid;
   grid-template-columns: 50px 60px 100px 1fr 1fr 120px;
@@ -44,6 +50,12 @@
   align-items: center;
   font-size: 14px;
   transition: 300ms ease-in-out;
+}
+
+/* Ensure rows/header have a minimum width so container can scroll on small screens */
+.table_header,
+.requests-row {
+  min-width: 760px;
 }
 
 .requests-row:hover {
@@ -151,7 +163,7 @@
 }
 
 @media (max-width: 768px) {
-  .requests-header,
+  .table_header,
   .requests-row {
     grid-template-columns: 40px 50px 80px 1fr 1fr 100px;
     gap: 8px;
@@ -170,7 +182,7 @@
 }
 
 @media (max-width: 480px) {
-  .requests-header,
+  .table_header,
   .requests-row {
     grid-template-columns: 35px 40px 70px 1fr 1fr 90px;
     gap: 6px;
