@@ -47,7 +47,7 @@
 }
 
 .sidebar.collapsed {
-  width: 70px;
+  width: 60px;
 }
 
 /* Mobile & Responsive */
@@ -77,7 +77,7 @@
   }
 
   .sidebar.closed {
-    width: 70px;
+    width: 60px;
   }
 }
 
@@ -106,32 +106,24 @@
 }
 
 .toggle-btn {
+  display: none; /* default: hide generic toggle; mobile-toggle will show on small screens */
+}
+
+.sidebar-toggle {
   background: none;
   border: none;
   color: white;
   cursor: pointer;
   font-size: 18px;
-}
-.sidebar-title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.sidebar.collapsed .sidebar-title {
-  display: none;
-}
-
-.toggle-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  display: none;
 }
 
-.toggle-btn:hover {
+.sidebar-toggle:hover {
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -192,12 +184,62 @@
   display: none;
 }
 
-.sidebar.collapsed .menu-item span {
+.sidebar.collapsed .menu-item .menu-text {
   display: none;
 }
 
-.menu-icon {
-  font-size: 18px;
+@media (min-width: 769px) {
+  /* On desktop, when collapsed, expand on hover to show labels */
+  .sidebar.collapsed {
+    width: 60px;
+    transition: width 0.25s ease;
+  }
+
+  .sidebar.collapsed {
+    width: 100px;
+  }
+
+  .sidebar.collapsed:hover .sidebar-title {
+    display: block;
+  }
+
+  .sidebar.collapsed:hover .menu-item .menu-text {
+    display: inline-block;
+    margin-left: 8px;
+  }
+
+  .sidebar.collapsed:hover .menu-section .menu-title {
+    opacity: 0.7;
+    pointer-events: auto;
+  }
+}
+
+.sidebar-nav-collapsed {
+  padding: 10px;
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item-collapsed {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.menu-item-collapsed:hover {
+  background-color: #004080;
+}
+
+.menu-item-collapsed.active {
+  background-color: #0059b3;
 }
 
 /* ===== Main content ===== */

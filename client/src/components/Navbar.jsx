@@ -32,13 +32,6 @@ export default function Navbar() {
     <div className="navbar_container">
       <div className="navbar_logo">QC360</div>
 
-      <div className="navbar_links">
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
-        <Link to="/services">Services</Link>
-        <Link to="/contact">Contact</Link>
-      </div>
-
       <button
         className="navbar_toggle"
         aria-label={mobileOpen ? "Close menu" : "Open menu"}
