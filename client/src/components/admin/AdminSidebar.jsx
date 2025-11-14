@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  FaUserCog,
   FaClipboardList,
   FaShieldAlt,
   FaFileAlt,
@@ -95,8 +94,9 @@ export default function AdminSidebar({ isOpen: initialOpen = true }) {
                   to={item.to}
                   className="menu-item-collapsed"
                   onClick={handleNavClick}
+                  aria-label={item.text}
                 >
-                  {item.icon}
+                  {isMobile ? item.icon : null}
                 </NavLink>
               ))}
             </div>
