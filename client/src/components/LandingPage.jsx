@@ -24,22 +24,25 @@ export default function LandingPage() {
     <>
     <Navbar />
 
-    <div className="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-r from-gray-200 to-gray-100 text-black/70 px-6">
+    <div className="main_page_container">
       {isAuthenticated ? (
         <>
-          <h1 className="text-4xl font-bold mb-4">
+          <h1>
             Welcome back, {user?.fullName || "User"}!
           </h1>
-          <p className="text-lg mb-6">Email: {user?.email}</p>
+          <p>Email: {user?.email}</p>
         
         </>
       ) : (
         <>
-          <h1 className="text-4xl font-bold mb-4">Welcome to QC360 Project</h1>
-          <p className="text-lg mb-6 max-w-xl">
+        <div className="text__container">
+
+          <div className="text__container__heading" >Welcome to QC360 Project</div>
+          <div className="text__container__subheading">
             Join us today and explore awesome features designed to make your
             experience impressive and powerful.
-          </p>
+          </div>
+        </div>
         </>
       )}
     </div>
