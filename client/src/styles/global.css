@@ -274,8 +274,8 @@
 .dashboard_button {
   display: inline-block;
   text-decoration: none;
-  color: white;
-  font-weight: 600;
+  color: black;
+  font-weight: 400;
   border-radius: 9999px;
   padding: 0.7rem 1.5rem;
   transition: all 0.3s ease;
@@ -287,22 +287,6 @@
 
 .dashboard_home:hover {
   background-color: #d97706;
-}
-
-.dashboard_profile {
-  background-color: #3b82f6;
-}
-
-.dashboard_profile:hover {
-  background-color: #2563eb;
-}
-
-.dashboard_change_password {
-  background-color: #10b981;
-}
-
-.dashboard_change_password:hover {
-  background-color: #059669;
 }
 
 .dashboard_button:hover {
