@@ -1,7 +1,5 @@
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { FaEye } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../context/AuthContext";
@@ -16,7 +14,6 @@ export default function ViewReq() {
   const [actionLoading, setActionLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
   const { logout } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   // Fetch signup requests on component mount
   useEffect(() => {
@@ -28,7 +25,6 @@ export default function ViewReq() {
     setLoading(true);
     try {
       const token = localStorage.getItem("accessToken");
-
       if (!token) {
         toast.error("Session expired. Please log in again.");
         logout(true);
@@ -36,7 +32,7 @@ export default function ViewReq() {
       }
 
       const response = await axios.get(
-        `${API_BASE_URL}/api/admin/signup-requests`,
+        `${API_BASE_URL}/api/admin/viewrequests`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -46,21 +42,12 @@ export default function ViewReq() {
       );
 
       if (response.data.success) {
-        setRequests(response.data.requests);
+        setRequests(response.data.data || []);
         setSelectedRows(new Set());
-        setRemarks("");
       }
     } catch (error) {
       console.error("Error fetching requests:", error);
-
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        toast.error("Session expired. Please log in again.");
-        logout(true);
-      } else {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch signup requests"
-        );
-      }
+      toast.error("Failed to fetch signup requests");
     } finally {
       setLoading(false);
     }
@@ -79,52 +66,46 @@ export default function ViewReq() {
 
   // Handle select all checkbox
   const handleSelectAll = () => {
-    if (requests.length > 0 && selectedRows.size === requests.length) {
+    if (selectedRows.size === requests.length) {
       setSelectedRows(new Set());
     } else {
-      const allIds = new Set(requests.map((req) => req._id));
-      setSelectedRows(allIds);
+      const allIds = requests.map((req) => req.requestId);
+      setSelectedRows(new Set(allIds));
     }
-  };
-
-  // View request details
-  const handleViewRequest = (reqId) => {
-    console.log("Request Details", reqId);
-    toast.info("Request details displayed in console");
   };
 
   // Perform approve or reject action
   const performAction = async (action) => {
-    // Validate remarks
     if (!remarks.trim()) {
-      toast.error("Please enter remarks before proceeding.");
+      toast.error("Please enter remarks");
       return;
     }
 
-    // Validate selection
     if (selectedRows.size === 0) {
-      toast.warning("Please select at least one request.");
+      toast.error("Please select at least one request");
       return;
     }
 
     setActionLoading(true);
     try {
       const token = localStorage.getItem("accessToken");
-
       if (!token) {
-        toast.error("Session expired. Please log in again.");
+        toast.error("Session expired");
         logout(true);
         return;
       }
 
       const requestIds = Array.from(selectedRows);
+      const endpoint =
+        action === "approve"
+          ? `${API_BASE_URL}/api/admin/requests/approve`
+          : `${API_BASE_URL}/api/admin/requests/reject`;
 
       const response = await axios.put(
-        `${API_BASE_URL}/api/admin/signup-requests/update-status`,
+        endpoint,
         {
           requestIds,
           remarks: remarks.trim(),
-          status: action === "approve" ? "approved" : "rejected",
         },
         {
           headers: {
@@ -135,29 +116,54 @@ export default function ViewReq() {
       );
 
       if (response.data.success) {
-        const successMessage =
-          action === "approve"
-            ? "Request(s) approved successfully."
-            : "Request(s) rejected successfully.";
-        toast.success(successMessage);
-
-        // Refresh the table data
-        await fetchSignupRequests();
+        toast.success(
+          `${action === "approve" ? "Approved" : "Rejected"} successfully!`
+        );
+        setSelectedRows(new Set());
+        setRemarks("");
+        fetchSignupRequests(); // Refresh data
       }
     } catch (error) {
-      console.error("Error performing action:", error);
-
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        toast.error("Session expired. Please log in again.");
-        logout(true);
-      } else {
-        toast.error(
-          error.response?.data?.message ||
-            `Failed to ${action} request(s). Please try again.`
-        );
-      }
+      console.error("Error:", error);
+      toast.error(`Failed to ${action} requests`);
     } finally {
       setActionLoading(false);
+    }
+  };
+
+  const handleViewRequest = async (requestId) => {
+    if (!requestId) {
+      toast.error("Invalid request ID");
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        toast.error("Session expired");
+        logout(true);
+        return;
+      }
+
+      const response = await axios.get(
+        `${API_BASE_URL}/api/admin/requests/${requestId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        const requestData = response.data.data;
+        alert(
+          `Name: ${requestData.fullName}\nEmail: ${requestData.email}\nStatus: ${requestData.status}`
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Failed to fetch request details");
     }
   };
 
@@ -183,6 +189,7 @@ export default function ViewReq() {
           <div className="table_entry">Req ID</div>
           <div className="table_entry">Requester Name</div>
           <div className="table_entry">Email</div>
+          <div className="table_entry">Status</div>
           <div className="table_entry">View Request</div>
         </div>
 
@@ -194,10 +201,11 @@ export default function ViewReq() {
           <div className="requests-row no-data">No requests found.</div>
         ) : (
           requests.map((request, index) => {
-            const id = request._id;
-            const reqId = `REQ-${String(request._id).slice(-8).toUpperCase()}`;
+            const id = request.requestId;
+            const reqId = `REQ-${String(id).slice(-8).toUpperCase()}`;
             const requesterName = request.fullName || "-";
             const email = request.email || "-";
+            const status = request.status || "Pending";
 
             return (
               <div
@@ -218,11 +226,18 @@ export default function ViewReq() {
                 <div className="table_entry">{requesterName}</div>
                 <div className="table_entry">{email}</div>
                 <div className="table_entry">
+                  <span
+                    className={`status-badge status-${status.toLowerCase()}`}
+                  >
+                    {status}
+                  </span>
+                </div>
+                <div className="table_entry">
                   <button
                     className="view_btn"
-                    onClick={() => handleViewRequest(reqId)}
+                    onClick={() => handleViewRequest(id)}
                   >
-                    <FaEye /> View
+                    View
                   </button>
                 </div>
               </div>
