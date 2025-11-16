@@ -12,7 +12,7 @@ const getALlUsersByAdmin = async (_, res) => {
             success: true,
             message: "All users fetch successfully",
             count: users.length,
-            users,
+            data: users,
         });
     } catch (error) {
         console.error("Error fetching users:", error);
@@ -124,10 +124,186 @@ const deleteUserByAdmin = async (req, res) => {
 //___________( Admin dashboard data for frontend testing )______________
 
 const dashboardData = async (_, res) => {
-     return res.status(200).json({
-      message: "Welcome Admin",
-      stats: {}
-     })
+  return res.status(200).json({
+    message: "Welcome Admin",
+    stats: {}
+  })
 };
 
-export { getALlUsersByAdmin, updateUserByAdmin, deleteUserByAdmin,dashboardData };
+
+//___________( Fetch all signup requests by admin )______________
+
+const getAllSignUpRequestsByAdmin = async (req, res) => {
+  try {
+    const signupRequests = await User.find(
+      { email: { $ne: "admin@gmail.com" } },
+  "fullName email status submittedAt"
+).sort({ submittedAt: -1 });
+
+const formattedRequests = signupRequests.map((user) => ({
+  requestId: user._id,
+  fullName: user.fullName,
+  email: user.email,
+  status: user.status,
+  submittedAt : user.submittedAt
+}));
+
+return res.status(200).json({
+  success: true,
+  message: "All sign up requests fetched successfully",
+  count: formattedRequests.length,
+  data: formattedRequests,
+});
+} catch (error) {
+  console.error("Error fetching users:", error);
+  return res.status(500).json({
+    success: false,
+    message: "Server error while fetching users",
+  });
+}
+};
+//___________( Approve signup requests by admin )______________
+
+const approvedSignUpRequestsByAdmin = async (req, res) => {
+  try {
+    
+    const {userId} = req.user;
+    console.log("Admin ID:", userId);
+    
+    const { requestIds, remarks } = req.body;
+    // Validate input
+    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide at least one user ID."
+      });
+    }
+    
+    if(!remarks){
+      return res.status(400).json({
+        success: false,
+        message: "Remarks is required."
+      });
+    }
+    // Update users in bulk
+    const result = await User.updateMany(
+      { _id: { $in: requestIds } }, 
+      { 
+        $set: { 
+          status: "Approved", 
+          remarks: remarks,
+          actionedBy: userId,
+          actionedAt : new Date()
+        } 
+      }
+    );
+    
+    return res.status(200).json({
+      success: true,
+      message: `${result.modifiedCount > 1 ? "requests" : "request"} approved successfully.`,
+    });
+    
+  } catch (error) {
+    console.error("Bulk approval error:", error);
+    
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: error.message
+    });
+  }
+};
+
+//___________( Reject signup requests by admin )______________
+
+const rejectedSignUpRequestsByAdmin = async (req, res) => {
+  try {
+
+    const user = req.user;
+    console.log("Admin ID:", user);
+    
+    const { requestIds, remarks } = req.body;
+    // Validate input
+    if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide at least one user ID."
+      });
+    }
+
+    if(!remarks){
+        return res.status(400).json({
+        success: false,
+        message: "Remarks is required."
+      });
+    }
+    // Update users in bulk
+    const result = await User.updateMany(
+      { _id: { $in: requestIds } }, 
+      { 
+        $set: { 
+          status: "Rejected", 
+          remarks: remarks,
+          actionedBy: user.userId,
+          actionedAt : new Date()
+        } 
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `${result.modifiedCount > 1 ? "requests" : "request"} rejected successfully.`,
+    });
+
+  } catch (error) {
+    console.error("Bulk approval error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error.",
+      error: error.message
+    });
+  }
+};
+
+
+ const getSignUpRequestById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Correct way to find by ID
+    const signupRequest = await User.findById(id).select("-currentToken -password");
+
+    if (!signupRequest) {
+      return res.status(404).json({
+        success: false,
+        message: "SignUp request not found!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "SignUp request fetched successfully",
+      data: signupRequest,
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong",
+      error: error.message,
+    });
+  }
+};
+
+
+export { 
+  getALlUsersByAdmin,
+  updateUserByAdmin,
+  deleteUserByAdmin,
+  dashboardData,
+  getAllSignUpRequestsByAdmin,
+  approvedSignUpRequestsByAdmin,
+  rejectedSignUpRequestsByAdmin,
+  getSignUpRequestById
+ };

@@ -53,7 +53,7 @@ export const signup = async (req, res) => {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    const status = "Submitted";
     // Save user
     const newUser = await User.create({
       fullName,
@@ -61,23 +61,25 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      status,
     });
 
     // generate acessToke
     // generate acessToke
 
     const token = jwt.sign(
-      { 
+      {
         userId: newUser._id,
-         email: newUser.email,
-          role: newUser.role
-       },
+        email: newUser.email,
+        role: newUser.role,
+      },
       process.env.JWT_SECRET
     );
 
     // Store token + activity time
     newUser.currentToken = token;
     newUser.lastActivity = new Date();
+    newUser.submittedAt = new Date();
     await newUser.save();
 
     return res.status(201).json({
@@ -89,7 +91,8 @@ export const signup = async (req, res) => {
         fullName: newUser.fullName,
         username: newUser.username,
         email: newUser.email,
-        role: newUser.role
+        role: newUser.role,
+        status: newUser.status,
       },
     });
   } catch (error) {
@@ -139,14 +142,29 @@ export const signIn = async (req, res) => {
       });
     }
 
+    if (user.status === "Submitted") {
+      return res.status(403).json({
+        success: false,
+        status: user.status,
+        message: "Your account has not been approved yet. Please wait for approval.",
+      });
+    } else if (user.status === "Rejected") {
+      return res.status(401).json({
+        success: false,
+        status: user.status,
+        message: "Login failed. The admin has rejected your account request.",
+        remarks : user.remarks
+      });
+    }
+
     // generate acessToke
 
     const token = jwt.sign(
-      { 
+      {
         userId: user._id,
-         email: user.email,
-          role: user.role
-       },
+        email: user.email,
+        role: user.role,
+      },
       process.env.JWT_SECRET
     );
 
@@ -156,15 +174,16 @@ export const signIn = async (req, res) => {
     await user.save();
 
     return res.status(200).json({
-       success: true,
+      success: true,
       message: "User login successfully",
+      remarks : user.remarks,
       accessToken: token,
       user: {
         _id: user._id,
         fullName: user.fullName,
         username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
       },
     });
   } catch (error) {
