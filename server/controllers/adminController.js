@@ -167,7 +167,7 @@ return res.status(200).json({
 const approvedSignUpRequestsByAdmin = async (req, res) => {
   try {
     
-    const {userId} = req.user;
+    const {_id : userId} = req.user;
     console.log("Admin ID:", userId);
     
     const { requestIds, remarks } = req.body;
@@ -200,7 +200,7 @@ const approvedSignUpRequestsByAdmin = async (req, res) => {
     
     return res.status(200).json({
       success: true,
-      message: `${result.modifiedCount > 1 ? "requests" : "request"} approved successfully.`,
+       message: `${result.modifiedCount > 1 ? `${result.modifiedCount} requests` : `${result.modifiedCount} request`} approved successfully.`,
     });
     
   } catch (error) {
@@ -252,7 +252,7 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `${result.modifiedCount > 1 ? "requests" : "request"} rejected successfully.`,
+      message: `${result.modifiedCount > 1 ? `${result.modifiedCount} requests` : `${result.modifiedCount} request`} rejected successfully.`,
     });
 
   } catch (error) {
