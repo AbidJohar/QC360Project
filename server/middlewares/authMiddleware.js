@@ -31,7 +31,7 @@ const authMiddleware = async (req, res, next) => {
     user.lastActivity = new Date();
     await user.save();
 
-    req.user = decoded;
+    req.user = user;
     next();
   } catch (err) {
     console.error("Auth error:", err);
