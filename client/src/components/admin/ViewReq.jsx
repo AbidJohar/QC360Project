@@ -20,7 +20,6 @@ export default function ViewReq() {
     fetchSignupRequests();
   }, []);
 
-  // Fetch all signup requests
   const fetchSignupRequests = async () => {
     setLoading(true);
     try {
