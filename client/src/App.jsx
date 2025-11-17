@@ -114,7 +114,7 @@ function App() {
           <Route path="manageUsers" element={<ManageUsers />} />
           <Route path="incidents" element={<Incidents />} />
           <Route path="docs" element={<ISO27001 />} />
-          <Route path="viewRequests" element={<ViewReq />} />
+          <Route path="viewReq" element={<ViewReq />} />
           <Route index element={<AdminDashboard />} />
         </Route>
       </Routes>
