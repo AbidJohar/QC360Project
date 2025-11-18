@@ -1,5 +1,6 @@
 import { User } from "../models/User.js";
 import bcrypt from 'bcrypt';
+import mongoose from "mongoose";
 
 
 //___________( get all users by admin )______________
@@ -185,6 +186,26 @@ const approvedSignUpRequestsByAdmin = async (req, res) => {
         message: "Remarks is required."
       });
     }
+
+       // Validate ObjectId format
+    for (let id of requestIds) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({
+          success: false,
+          message: `Invalid requestId`
+        });
+      }
+    }
+
+    // Check if users actually exist
+    const existingUsers = await User.find({ _id: { $in: requestIds } });
+    if (existingUsers.length !== requestIds.length) {
+      return res.status(404).json({
+        success: false,
+        message: "One or more requestIds do not exist.",
+      });
+    }
+
     // Update users in bulk
     const result = await User.updateMany(
       { _id: { $in: requestIds } }, 
@@ -237,6 +258,26 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
         message: "Remarks is required."
       });
     }
+
+      // Validate ObjectId format
+    for (let id of requestIds) {
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({
+          success: false,
+          message: `Invalid requestId`
+        });
+      }
+    }
+
+    // Check if users actually exist
+    const existingUsers = await User.find({ _id: { $in: requestIds } });
+    if (existingUsers.length !== requestIds.length) {
+      return res.status(404).json({
+        success: false,
+        message: "One or more requestIds do not exist.",
+      });
+    }
+
     // Update users in bulk
     const result = await User.updateMany(
       { _id: { $in: requestIds } }, 
@@ -271,8 +312,20 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
   try {
     const { id } = req.params;
 
+
+         // Validate ObjectId format
+    
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({
+          success: false,
+          message: `Invalid requestId`
+        });
+      }
+    
+
     // Correct way to find by ID
     const signupRequest = await User.findById(id).select("-currentToken -password");
+
 
     if (!signupRequest) {
       return res.status(404).json({
