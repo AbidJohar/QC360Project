@@ -12,8 +12,8 @@ import Dashboard from "./components/Dashboard";
 import LandingPage from "./components/LandingPage";
 import "./styles/global.css";
 import Profile from "./components/Profile";
-import ChangePassword from "./components/changePassword";
-import AdminLayout from "./components/admin/AdminLayout";
+import ChangePassword from "./components/ChangePassword";
+import AdminLayout from "./components/admin/Adminlayout";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import ManageUsers from "./components/admin/ManageUsers";
 import Incidents from "./components/admin/Incidents";
@@ -114,7 +114,7 @@ function App() {
           <Route path="manageUsers" element={<ManageUsers />} />
           <Route path="incidents" element={<Incidents />} />
           <Route path="docs" element={<ISO27001 />} />
-          <Route path="viewRequests" element={<ViewReq />} />
+          <Route path="viewReq" element={<ViewReq />} />
           <Route index element={<AdminDashboard />} />
         </Route>
       </Routes>

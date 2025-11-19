@@ -16,7 +16,7 @@ export default function AdminSidebar({ isOpen: initialOpen = true }) {
   const menuItems = [
     { to: "/admin/dashboard", icon: <FaClipboardList />, text: "Dashboard" },
     {
-      to: "/admin/viewRequests",
+      to: "/admin/viewReq",
       icon: <FaClipboardList />,
       text: "View Request",
     },
@@ -117,7 +117,7 @@ export default function AdminSidebar({ isOpen: initialOpen = true }) {
                       <span className="menu-text">Dashboard</span>
                     </NavLink>
                     <NavLink
-                      to="/admin/viewRequests"
+                      to="/admin/viewReq"
                       className="menu-item"
                       onClick={handleNavClick}
                     >
