@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/signup.css"
+import "../styles/signup.css";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -31,7 +31,7 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     setLoading(true);
-  
+
     try {
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
@@ -55,17 +55,16 @@ const SignUp = () => {
       // Show success toast/message and redirect appropriately.
       setSuccessMessage("Signup successful. Redirecting to login...");
 
-      if (formData.role === 'Admin') {
-        navigate('/admin');
+      if (formData.role === "Admin") {
+        navigate("/admin");
         return;
       }
 
       setTimeout(() => {
-        navigate('/login');
+        navigate("/login");
       }, 1400);
     } catch (error) {
       setError(error.message || "Signup failed. Please try again.");
-     
     } finally {
       setLoading(false);
     }
@@ -76,15 +75,23 @@ const SignUp = () => {
       <div className="sign_up_box">
         <h2 className="sign_up_title">Create an Account</h2>
 
-          {error && <div className="error_message">{error}</div>}
-          {successMessage && (
-            <div className="success_message" style={{background: '#22c55e', color: '#fff', padding: '10px', borderRadius: 6, marginBottom: 12}}>
-              {successMessage}
-            </div>
-          )}
+        {error && <div className="error_message">{error}</div>}
+        {successMessage && (
+          <div
+            className="success_message"
+            style={{
+              background: "#22c55e",
+              color: "#fff",
+              padding: "10px",
+              borderRadius: 6,
+              marginBottom: 12,
+            }}
+          >
+            {successMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="sign_up_form">
-          
           <div className="form_group">
             <label className="form_label">Full Name</label>
             <input
@@ -99,7 +106,6 @@ const SignUp = () => {
             />
           </div>
 
-      
           <div className="form_group">
             <label className="form_label">Username</label>
             <input
@@ -127,7 +133,7 @@ const SignUp = () => {
               disabled={loading}
             />
           </div>
-          
+
           <div className="form_group">
             <label className="form_label">Password</label>
             <input
@@ -166,15 +172,11 @@ const SignUp = () => {
               disabled={loading}
             >
               <option value="Employee">Employee</option>
-              <option value="Admin">Admin</option>
+              {/* <option value="Admin">Admin</option> */}
             </select>
           </div>
 
-          <button
-            type="submit"
-            className="sign_up_button"
-            disabled={loading}
-          >
+          <button type="submit" className="sign_up_button" disabled={loading}>
             {loading ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
