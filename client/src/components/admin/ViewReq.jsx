@@ -115,12 +115,15 @@ export default function ViewReq() {
       );
 
       if (response.data.success) {
+        const count = requestIds.length;
         toast.success(
-          `${action === "approve" ? "Approved" : "Rejected"} successfully!`
+          `${count} request${count > 1 ? "s" : ""} ${
+            action === "approve" ? "approved" : "rejected"
+          } successfully!`
         );
         setSelectedRows(new Set());
         setRemarks("");
-        fetchSignupRequests(); // Refresh data
+        fetchSignupRequests();
       }
     } catch (error) {
       console.error("Error:", error);
