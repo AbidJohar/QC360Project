@@ -115,12 +115,15 @@ export default function ViewReq() {
       );
 
       if (response.data.success) {
+        const count = requestIds.length;
         toast.success(
-          `${action === "approve" ? "Approved" : "Rejected"} successfully!`
+          `${count} request${count > 1 ? "s" : ""} ${
+            action === "approve" ? "approved" : "rejected"
+          } successfully!`
         );
         setSelectedRows(new Set());
         setRemarks("");
-        fetchSignupRequests(); // Refresh data
+        fetchSignupRequests();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -200,8 +203,8 @@ export default function ViewReq() {
           <div className="requests-row no-data">No requests found.</div>
         ) : (
           requests.map((request, index) => {
-            const id = request.requestId;
-            const reqId = `REQ-${String(id).slice(-8).toUpperCase()}`;
+            const id = request.requestId || request._id;
+            // const reqId = `REQ-${String(id).slice(-8).toUpperCase()}`;
             const requesterName = request.fullName || "-";
             const email = request.email || "-";
             const status = request.status || "Pending";
@@ -221,7 +224,7 @@ export default function ViewReq() {
                   />
                 </div>
                 <div className="table_entry">{index + 1}</div>
-                <div className="table_entry">{reqId}</div>
+                <div className="table_entry">{id}</div>
                 <div className="table_entry">{requesterName}</div>
                 <div className="table_entry">{email}</div>
                 <div className="table_entry">
