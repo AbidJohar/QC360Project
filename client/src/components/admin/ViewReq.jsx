@@ -177,7 +177,13 @@ export default function ViewReq() {
 
       <div className="table_container">
         <div className="table_header">
-          <div className="col-checkbox">
+          <div className="table_entry">S.No</div>
+          <div className="table_entry">Req ID</div>
+          <div className="table_entry">Requester Name</div>
+          <div className="table_entry">Email</div>
+          <div className="table_entry">View Request</div>
+          <div className="table_entry">Status</div>
+          <div className="table_entry">
             <input
               type="checkbox"
               checked={
@@ -187,12 +193,6 @@ export default function ViewReq() {
               title="Select all requests"
             />
           </div>
-          <div className="table_entry">S.No</div>
-          <div className="table_entry">Req ID</div>
-          <div className="table_entry">Requester Name</div>
-          <div className="table_entry">Email</div>
-          <div className="table_entry">Status</div>
-          <div className="table_entry">View Request</div>
         </div>
 
         {loading ? (
@@ -204,7 +204,6 @@ export default function ViewReq() {
         ) : (
           requests.map((request, index) => {
             const id = request.requestId || request._id;
-            // const reqId = `REQ-${String(id).slice(-8).toUpperCase()}`;
             const requesterName = request.fullName || "-";
             const email = request.email || "-";
             const status = request.status || "Pending";
@@ -216,24 +215,10 @@ export default function ViewReq() {
                   selectedRows.has(id) ? "selected" : ""
                 }`}
               >
-                <div className="col-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={selectedRows.has(id)}
-                    onChange={() => handleSelectRow(id)}
-                  />
-                </div>
                 <div className="table_entry">{index + 1}</div>
                 <div className="table_entry">{id}</div>
                 <div className="table_entry">{requesterName}</div>
                 <div className="table_entry">{email}</div>
-                <div className="table_entry">
-                  <span
-                    className={`status-badge status-${status.toLowerCase()}`}
-                  >
-                    {status}
-                  </span>
-                </div>
                 <div className="table_entry">
                   <button
                     className="view_btn"
@@ -241,6 +226,21 @@ export default function ViewReq() {
                   >
                     View
                   </button>
+                </div>
+                <div className="table_entry">
+                  <span
+                    className={`status-badge status-${status.toLowerCase()}`}
+                  >
+                    {status}
+                  </span>
+                </div>
+
+                <div className="table_entry">
+                  <input
+                    type="checkbox"
+                    checked={selectedRows.has(id)}
+                    onChange={() => handleSelectRow(id)}
+                  />
                 </div>
               </div>
             );
