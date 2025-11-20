@@ -51,7 +51,7 @@ export default function Dashboard() {
       </div>
       <div className="dashboard_container">
         <div className="dashboard_box">
-          <h2 className="dashboard_title">Welcome, {displayName}</h2>
+          <div className="dashboard_title">Welcome, {displayName}</div>
 
           <p className="dashboard_subtext">
             Manage your profile, change your password, or head back home.

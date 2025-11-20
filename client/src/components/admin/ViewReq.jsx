@@ -15,7 +15,6 @@ export default function ViewReq() {
   const [remarks, setRemarks] = useState("");
   const { logout } = useContext(AuthContext);
 
-  // Fetch signup requests on component mount
   useEffect(() => {
     fetchSignupRequests();
   }, []);
@@ -52,7 +51,6 @@ export default function ViewReq() {
     }
   };
 
-  // Handle individual row selection
   const handleSelectRow = (id) => {
     const newSelectedRows = new Set(selectedRows);
     if (newSelectedRows.has(id)) {
@@ -63,7 +61,6 @@ export default function ViewReq() {
     setSelectedRows(newSelectedRows);
   };
 
-  // Handle select all checkbox
   const handleSelectAll = () => {
     if (selectedRows.size === requests.length) {
       setSelectedRows(new Set());
@@ -73,7 +70,6 @@ export default function ViewReq() {
     }
   };
 
-  // Perform approve or reject action
   const performAction = async (action) => {
     if (!remarks.trim()) {
       toast.error("Please enter remarks");
