@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../styles/signup.css";
 
 const SignUp = () => {
@@ -54,6 +56,7 @@ const SignUp = () => {
       );
       // Show success toast/message and redirect appropriately.
       setSuccessMessage("Signup successful. Redirecting to login...");
+      toast.success("Signup successful!");
 
       if (formData.role === "Admin") {
         navigate("/admin");
@@ -64,7 +67,26 @@ const SignUp = () => {
         navigate("/login");
       }, 1400);
     } catch (error) {
-      setError(error.message || "Signup failed. Please try again.");
+      const errorMessage = error.message || "Signup failed. Please try again.";
+
+      // Check for specific error types
+      if (errorMessage.includes("expired") || errorMessage.includes("token")) {
+        toast.error("Session expired. Please log in again.");
+      } else if (
+        error.response?.status === 403 ||
+        error.response?.status === 401
+      ) {
+        toast.error("Access denied. Please check your credentials.");
+      } else if (
+        errorMessage.includes("wrong") ||
+        errorMessage.includes("failed")
+      ) {
+        toast.error("Something went wrong. Please try again.");
+      } else {
+        toast.error(errorMessage);
+      }
+
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -72,6 +94,7 @@ const SignUp = () => {
 
   return (
     <div className="sign_up_container">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="sign_up_box">
         <h2 className="sign_up_title">Create an Account</h2>
 
@@ -172,7 +195,8 @@ const SignUp = () => {
               disabled={loading}
             >
               <option value="Employee">Employee</option>
-              {/* <option value="Admin">Admin</option> */}
+              <option value="Admin">Admin</option>
+              <option value="Manager">Manager</option>
             </select>
           </div>
 
