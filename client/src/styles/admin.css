@@ -13,7 +13,7 @@
 }
 
 /* ===== Header ===== */
-.admin-header {
+.admin_header {
   background-color: #002b5b;
   color: #fff;
   padding: 15px 25px;
@@ -250,13 +250,18 @@
   overflow-y: auto;
   transition: all 0.3s ease;
 }
+.dashboard_header_entry {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffffff;
+}
 
 @media (max-width: 768px) {
   .admin-container {
     flex-direction: column;
   }
 
-  .admin-header {
+  .admin_header {
     position: relative;
     z-index: 500;
     flex-direction: row;
@@ -265,12 +270,11 @@
     flex-wrap: wrap;
   }
 
-  .admin-header h2 {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-    flex: 1;
+  .dashboard_header_entry {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.5rem;
   }
 
   .mobile-toggle {

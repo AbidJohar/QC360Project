@@ -252,13 +252,6 @@
   width: 100%;
 }
 
-.dashboard_title {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
 .dashboard_subtext {
   color: #6b7280;
   font-size: 0.95rem;

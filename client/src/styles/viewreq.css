@@ -19,29 +19,29 @@
   border-radius: 6px;
   border: 1px solid #ddd;
   margin-bottom: 20px;
-}
-
-.table_container {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
+  min-height: 200px;
+  max-height: 450px;
+  overflow-y: auto;
 }
 
 .table_header {
-  display: grid;
-  grid-template-columns: 50px 60px 100px 1fr 1fr 100px 120px;
+  display: flex;
   gap: 12px;
   padding: 12px 16px;
   background: #f5f5f5;
-  border-bottom: 1px solid #ddd;
+  width: fit-content;
   font-weight: 600;
   font-size: 13px;
   color: #555;
   align-items: center;
+  flex: 1;
 }
 
 .requests-row {
-  display: grid;
-  grid-template-columns: 50px 60px 100px 1fr 1fr 100px 120px;
+  display: flex;
   gap: 12px;
   padding: 12px 16px;
   border-bottom: 1px solid #eee;
@@ -53,7 +53,8 @@
 /* Ensure rows/header have a minimum width so container can scroll on small screens */
 .table_header,
 .requests-row {
-  min-width: 860px;
+  min-width: 700px;
+  flex-wrap: nowrap;
 }
 
 .requests-row:hover {
@@ -103,6 +104,8 @@
 .col-checkbox {
   display: flex;
   justify-content: center;
+  min-width: 40px;
+  flex-shrink: 0;
 }
 
 .col-checkbox input {
@@ -115,6 +118,11 @@
   text-align: center;
   font-weight: 500;
   color: #333;
+  flex: 1;
+  min-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .col-action {
@@ -295,10 +303,14 @@
 @media (max-width: 768px) {
   .table_header,
   .requests-row {
-    grid-template-columns: 40px 50px 80px 1fr 1fr 80px 100px;
+    min-width: 200px;
     gap: 8px;
     padding: 10px 12px;
     font-size: 12px;
+  }
+
+  .table_entry {
+    min-width: 100px;
   }
 
   .viewreq-container {
@@ -317,26 +329,5 @@
   .btn-primary,
   .btn-danger {
     max-width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .table_header,
-  .requests-row {
-    grid-template-columns: 35px 40px 70px 1fr 1fr 70px 90px;
-    gap: 6px;
-    padding: 8px 10px;
-    font-size: 11px;
-  }
-
-  .view_btn {
-    padding: 4px 8px;
-    font-size: 11px;
-  }
-
-  .btn-primary,
-  .btn-danger {
-    padding: 6px 12px;
-    font-size: 12px;
   }
 }

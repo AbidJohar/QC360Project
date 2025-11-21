@@ -33,7 +33,7 @@ export default function AdminLayout() {
     <div className="admin-container">
       <AdminSidebar isOpen={true} />
       <div className="admin-main">
-        <header className="admin-header">
+        <header className="admin_header">
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button
               className="toggle-btn mobile-toggle"
@@ -45,7 +45,7 @@ export default function AdminLayout() {
             >
               <FaBars />
             </button>
-            <h2>Welcome, {adminName}</h2>
+            <div className="dashboard_header_entry">Welcome, {adminName}</div>
           </div>
           <button className="logout-btn" onClick={handleLogout}>
             Logout
