@@ -178,7 +178,7 @@ export default function ViewReq() {
           <div className="table_entry">Requester Name</div>
           <div className="table_entry">Email</div>
           <div className="table_entry">View Request</div>
-          <div className="table_entry">Status</div>
+          {/* <div className="table_entry">Status</div> */}
           <div className="table_entry">
             <input
               type="checkbox"
@@ -223,13 +223,13 @@ export default function ViewReq() {
                     View
                   </button>
                 </div>
-                <div className="table_entry">
+                {/* <div className="table_entry">
                   <span
                     className={`status-badge status-${status.toLowerCase()}`}
                   >
                     {status}
                   </span>
-                </div>
+                </div> */}
 
                 <div className="table_entry">
                   <input
