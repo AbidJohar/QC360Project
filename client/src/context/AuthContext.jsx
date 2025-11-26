@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext();
 
@@ -26,6 +27,10 @@ export const AuthProvider = ({ children }) => {
     clearLogoutTimer();
     logoutTimerRef.current = setTimeout(() => {
       console.log("Logout timer expired — performing auto-logout");
+      toast.error("Session expired, please login again", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       logout(true);
     }, 10 * 60 * 1000);
   };
@@ -87,8 +92,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Logout function
-  // If `redirect` is true, navigate to the login page after clearing state.
   const logout = (redirect = false) => {
     console.log("Logging out. redirect=", redirect);
     clearLogoutTimer();
@@ -98,7 +101,9 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(false);
     if (redirect) {
       try {
-        window.location.href = "/login";
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 100);
       } catch (e) {
         console.log("Redirect after logout failed", e);
       }

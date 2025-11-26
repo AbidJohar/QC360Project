@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import SignUp from "./components/SignUp";
 import Login from "./components/SignIn";
 import Dashboard from "./components/Dashboard";
@@ -60,6 +62,7 @@ const PublicRoute = ({ children }) => {
 function App() {
   return (
     <Router>
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route

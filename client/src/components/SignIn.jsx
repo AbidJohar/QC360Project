@@ -1,8 +1,10 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/signIn.css"
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/signIn.css";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -47,7 +49,8 @@ export default function Login() {
   };
 
   return (
-   <div className="login_container">
+    <div className="login_container">
+      <ToastContainer position="top-right" autoClose={5000} />
       <div className="login_box">
         <h2 className="login_title">Welcome Back</h2>
 
@@ -94,5 +97,4 @@ export default function Login() {
       </div>
     </div>
   );
-};
-
+}
