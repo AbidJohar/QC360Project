@@ -13,6 +13,10 @@ export default function ViewReq() {
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [modalRemarks, setModalRemarks] = useState("");
+  const [modalActionLoading, setModalActionLoading] = useState(false);
   const { logout } = useContext(AuthContext);
 
   useEffect(() => {
@@ -73,6 +77,11 @@ export default function ViewReq() {
   const performAction = async (action) => {
     if (!remarks.trim()) {
       toast.error("Please enter remarks");
+      return;
+    }
+
+    if (remarks.trim().length < 50) {
+      toast.error("Remarks must be at least 50 characters");
       return;
     }
 
@@ -155,13 +164,71 @@ export default function ViewReq() {
 
       if (response.data.success) {
         const requestData = response.data.data;
-        alert(
-          `Name: ${requestData.fullName}\nEmail: ${requestData.email}\nStatus: ${requestData.status}`
-        );
+        setSelectedRequest(requestData);
+        setModalRemarks("");
+        setShowDetailModal(true);
       }
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to fetch request details");
+    }
+  };
+
+  const handleModalAction = async (action) => {
+    if (!modalRemarks.trim()) {
+      toast.error("Please enter remarks");
+      return;
+    }
+
+    if (modalRemarks.trim().length < 50) {
+      toast.error("Remarks must be at least 50 characters");
+      return;
+    }
+
+    setModalActionLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (!token) {
+        toast.error("Session expired");
+        logout(true);
+        return;
+      }
+
+      const endpoint =
+        action === "approve"
+          ? `${API_BASE_URL}/api/admin/requests/approve`
+          : `${API_BASE_URL}/api/admin/requests/reject`;
+
+      const response = await axios.put(
+        endpoint,
+        {
+          requestIds: [selectedRequest.requestId || selectedRequest._id],
+          remarks: modalRemarks.trim(),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.success) {
+        toast.success(
+          `Request ${
+            action === "approve" ? "approved" : "rejected"
+          } successfully!`
+        );
+        setShowDetailModal(false);
+        setSelectedRequest(null);
+        setModalRemarks("");
+        fetchSignupRequests();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(`Failed to ${action} request`);
+    } finally {
+      setModalActionLoading(false);
     }
   };
 
@@ -249,20 +316,28 @@ export default function ViewReq() {
         <textarea
           id="remarks"
           value={remarks}
-          onChange={(e) => setRemarks(e.target.value)}
+          onChange={(e) => setRemarks(e.target.value.slice(0, 200))}
           placeholder="Enter remarks here (required for approval/rejection)"
           rows={4}
+          maxLength={100}
           disabled={actionLoading}
         />
+        <div className="char-count">{remarks.length}/100 characters</div>
 
         <div className="actions-buttons">
           <button
             className="btn-primary"
             onClick={() => performAction("approve")}
-            disabled={actionLoading || selectedRows.size === 0}
+            disabled={
+              actionLoading ||
+              selectedRows.size === 0 ||
+              remarks.trim().length < 50
+            }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
+                : remarks.trim().length < 50
+                ? "Remarks must be at least 50 characters"
                 : ""
             }
           >
@@ -271,10 +346,16 @@ export default function ViewReq() {
           <button
             className="btn-danger"
             onClick={() => performAction("reject")}
-            disabled={actionLoading || selectedRows.size === 0}
+            disabled={
+              actionLoading ||
+              selectedRows.size === 0 ||
+              remarks.trim().length < 50
+            }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
+                : remarks.trim().length < 50
+                ? "Remarks must be at least 50 characters"
                 : ""
             }
           >
@@ -282,6 +363,106 @@ export default function ViewReq() {
           </button>
         </div>
       </div>
+
+      {showDetailModal && selectedRequest && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3>View Request Details</h3>
+              <button
+                className="modal-close"
+                onClick={() => setShowDetailModal(false)}
+                disabled={modalActionLoading}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="modal-body">
+              <div className="request-detail-row">
+                <label>Request ID:</label>
+                <span>{selectedRequest.requestId || selectedRequest._id}</span>
+              </div>
+              <div className="request-detail-row">
+                <label>Full Name:</label>
+                <span>{selectedRequest.fullName || "-"}</span>
+              </div>
+              <div className="request-detail-row">
+                <label>Email:</label>
+                <span>{selectedRequest.email || "-"}</span>
+              </div>
+              <div className="request-detail-row">
+                <label>Status:</label>
+                <span
+                  className={`status-badge status-${(
+                    selectedRequest.status || "pending"
+                  ).toLowerCase()}`}
+                >
+                  {selectedRequest.status || "Pending"}
+                </span>
+              </div>
+              {selectedRequest.submittedAt && (
+                <div className="request-detail-row">
+                  <label>Submitted At:</label>
+                  <span>
+                    {new Date(selectedRequest.submittedAt).toLocaleString()}
+                  </span>
+                </div>
+              )}
+
+              <div className="modal-remarks">
+                <label htmlFor="modal-remarks">Remarks:</label>
+                <textarea
+                  id="modal-remarks"
+                  value={modalRemarks}
+                  onChange={(e) =>
+                    setModalRemarks(e.target.value.slice(0, 100))
+                  }
+                  placeholder="Enter remarks (required for approval/rejection)"
+                  rows={4}
+                  maxLength={100}
+                  disabled={modalActionLoading}
+                />
+                <div className="char-count">
+                  {modalRemarks.length}/100 characters
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button
+                className="btn-primary"
+                onClick={() => handleModalAction("approve")}
+                disabled={
+                  modalActionLoading ||
+                  !modalRemarks.trim() ||
+                  modalRemarks.trim().length < 50
+                }
+              >
+                {modalActionLoading ? "Processing..." : "Approve"}
+              </button>
+              <button
+                className="btn-danger"
+                onClick={() => handleModalAction("reject")}
+                disabled={
+                  modalActionLoading ||
+                  !modalRemarks.trim() ||
+                  modalRemarks.trim().length < 50
+                }
+              >
+                {modalActionLoading ? "Processing..." : "Reject"}
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => setShowDetailModal(false)}
+                disabled={modalActionLoading}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
