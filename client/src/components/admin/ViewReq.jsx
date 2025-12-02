@@ -126,9 +126,15 @@ export default function ViewReq() {
             action === "approve" ? "approved" : "rejected"
           } successfully!`
         );
+
+        // Remove requests from the list for both approve and reject
+        const updatedRequests = requests.filter(
+          (req) => !requestIds.includes(req.requestId || req._id)
+        );
+        setRequests(updatedRequests);
+
         setSelectedRows(new Set());
         setRemarks("");
-        fetchSignupRequests();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -219,10 +225,18 @@ export default function ViewReq() {
             action === "approve" ? "approved" : "rejected"
           } successfully!`
         );
+
+        // Remove request from the list for both approve and reject
+        const updatedRequests = requests.filter(
+          (req) =>
+            (req.requestId || req._id) !==
+            (selectedRequest.requestId || selectedRequest._id)
+        );
+        setRequests(updatedRequests);
+
         setShowDetailModal(false);
         setSelectedRequest(null);
         setModalRemarks("");
-        fetchSignupRequests();
       }
     } catch (error) {
       console.error("Error:", error);
@@ -319,10 +333,10 @@ export default function ViewReq() {
           onChange={(e) => setRemarks(e.target.value.slice(0, 200))}
           placeholder="Enter remarks here (required for approval/rejection)"
           rows={4}
-          maxLength={100}
+          maxLength={200}
           disabled={actionLoading}
         />
-        <div className="char-count">{remarks.length}/100 characters</div>
+        <div className="char-count">{remarks.length}/200 characters</div>
 
         <div className="actions-buttons">
           <button
@@ -331,13 +345,13 @@ export default function ViewReq() {
             disabled={
               actionLoading ||
               selectedRows.size === 0 ||
-              remarks.trim().length < 50
+              remarks.trim().length < 10
             }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
-                : remarks.trim().length < 50
-                ? "Remarks must be at least 50 characters"
+                : remarks.trim().length < 10
+                ? "Remarks must be at least 10 characters"
                 : ""
             }
           >
@@ -349,13 +363,13 @@ export default function ViewReq() {
             disabled={
               actionLoading ||
               selectedRows.size === 0 ||
-              remarks.trim().length < 50
+              remarks.trim().length < 10
             }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
-                : remarks.trim().length < 50
-                ? "Remarks must be at least 50 characters"
+                : remarks.trim().length < 10
+                ? "Remarks must be at least 10 characters"
                 : ""
             }
           >
@@ -420,11 +434,11 @@ export default function ViewReq() {
                   }
                   placeholder="Enter remarks (required for approval/rejection)"
                   rows={4}
-                  maxLength={100}
+                  maxLength={200}
                   disabled={modalActionLoading}
                 />
                 <div className="char-count">
-                  {modalRemarks.length}/100 characters
+                  {modalRemarks.length}/200 characters
                 </div>
               </div>
             </div>
