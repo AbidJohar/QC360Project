@@ -80,8 +80,8 @@ export default function ViewReq() {
       return;
     }
 
-    if (remarks.trim().length < 50) {
-      toast.error("Remarks must be at least 50 characters");
+    if (remarks.trim().length < 10) {
+      toast.error("Remarks must be at least 10 characters");
       return;
     }
 
@@ -186,8 +186,8 @@ export default function ViewReq() {
       return;
     }
 
-    if (modalRemarks.trim().length < 50) {
-      toast.error("Remarks must be at least 50 characters");
+    if (modalRemarks.trim().length < 10) {
+      toast.error("Remarks must be at least 10 characters");
       return;
     }
 

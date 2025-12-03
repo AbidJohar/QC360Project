@@ -55,17 +55,9 @@ const SignUp = () => {
         formData.role
       );
       // Show success toast/message and redirect appropriately.
-      setSuccessMessage("Signup successful. Redirecting to login...");
+      setSuccessMessage("Signup successful. Redirecting...");
       toast.success("Signup successful!");
-
-      if (formData.role === "Admin") {
-        navigate("/admin");
-        return;
-      }
-
-      setTimeout(() => {
-        navigate("/login");
-      }, 1400);
+      // Let PublicRoute handle the redirect based on role
     } catch (error) {
       const errorMessage = error.message || "Signup failed. Please try again.";
 

@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
       });
       const { accessToken, user } = response.data;
 
-      if (user && user.role === "Admin") {
+      if (user && (user.role === "Admin" || user.role === "Manager")) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/signIn.css";
@@ -13,8 +12,7 @@ export default function Login() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signin, user } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { signin } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({
@@ -29,21 +27,10 @@ export default function Login() {
     setLoading(true);
     try {
       await signin(formData.email, formData.password);
-      const loggedInUser = JSON.parse(localStorage.getItem("user"));
-      console.log("Logged in user:", loggedInUser);
-      console.log("User role:", loggedInUser?.role);
-      if (loggedInUser && loggedInUser.role === "Admin") {
-        console.log("Redirecting to admin");
-        navigate("/admin");
-      } else {
-        console.log("Redirecting to home");
-        navigate("/");
-      }
-      return true;
+      // Let PublicRoute handle the redirect based on isAuthenticated state
     } catch (error) {
-      setError(error.message || "Signup failed. Please try again.");
-      console.log("Error in signup function:", error);
-    } finally {
+      setError(error.message || "Signin failed. Please try again.");
+      console.log("Error in signin function:", error);
       setLoading(false);
     }
   };
