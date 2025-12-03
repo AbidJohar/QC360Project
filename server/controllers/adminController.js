@@ -1,29 +1,27 @@
 import { User } from "../models/User.js";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 import mongoose from "mongoose";
-
 
 //___________( get all users by admin )______________
 
 const getALlUsersByAdmin = async (_, res) => {
-    try {
-        const users = await User.find({role : "Employee"}).select("-password");
-        
-        res.status(200).json({
-            success: true,
-            message: "All users fetch successfully",
-            count: users.length,
-            data: users,
-        });
-    } catch (error) {
-        console.error("Error fetching users:", error);
-        res.status(500).json({
-            success: false,
-            message: "Server error while fetching users",
-        });
-    }
-};
+  try {
+    const users = await User.find({ role: "Employee" }).select("-password");
 
+    res.status(200).json({
+      success: true,
+      message: "All users fetch successfully",
+      count: users.length,
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching users",
+    });
+  }
+};
 
 //___________( update user by admin )______________
 const updateUserByAdmin = async (req, res) => {
@@ -31,14 +29,13 @@ const updateUserByAdmin = async (req, res) => {
     const { id } = req.params;
     const { fullName, role, password } = req.body;
 
-   // validation
+    // validation
     if (fullName && !/^[A-Za-z\s]+$/.test(fullName)) {
       return res.status(400).json({
         success: false,
-        message: "Full name should contain only letters.",
+        message: "Full name should contain only letter.",
       });
     }
-
 
     if (role && !["Admin", "Employee"].includes(role)) {
       return res.status(400).json({
@@ -53,8 +50,6 @@ const updateUserByAdmin = async (req, res) => {
         message: "Password must be at least 8 characters long.",
       });
     }
-
-
 
     // Build update object
     const updatedData = {};
@@ -94,7 +89,6 @@ const updateUserByAdmin = async (req, res) => {
   }
 };
 
-
 //___________( delete user by admin )______________
 const deleteUserByAdmin = async (req, res) => {
   try {
@@ -127,72 +121,84 @@ const deleteUserByAdmin = async (req, res) => {
 const dashboardData = async (_, res) => {
   return res.status(200).json({
     message: "Welcome Admin",
-    stats: {}
-  })
+    stats: {},
+  });
 };
-
 
 //___________( Fetch all signup requests by admin )______________
 
 const getAllSignUpRequestsByAdmin = async (req, res) => {
   try {
+    // Fetch ONLY pending requests
     const signupRequests = await User.find(
-      { email: { $ne: "admin@gmail.com" } },
-  "fullName email status submittedAt"
-).sort({ submittedAt: -1 });
+      {
+        email: { $ne: "admin@gmail.com" },
+        status: "Submitted",
+      },
+      "fullName email status submittedAt"
+    ).sort({ submittedAt: -1 });
 
-const formattedRequests = signupRequests.map((user) => ({
-  requestId: user._id,
-  fullName: user.fullName,
-  email: user.email,
-  status: user.status,
-  submittedAt : user.submittedAt
-}));
+    const formattedRequests = signupRequests.map((user) => ({
+      requestId: user._id,
+      fullName: user.fullName,
+      email: user.email,
+      status: user.status,
+      submittedAt: user.submittedAt,
+    }));
 
-return res.status(200).json({
-  success: true,
-  message: "All sign up requests fetched successfully",
-  count: formattedRequests.length,
-  data: formattedRequests,
-});
-} catch (error) {
-  console.error("Error fetching users:", error);
-  return res.status(500).json({
-    success: false,
-    message: "Server error while fetching users",
-  });
-}
+    return res.status(200).json({
+      success: true,
+      message: "All pending sign-up requests fetched successfully",
+      count: formattedRequests.length,
+      data: formattedRequests,
+    });
+  } catch (error) {
+    console.error("Error fetching pending users:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching pending users",
+    });
+  }
 };
 //___________( Approve signup requests by admin )______________
 
 const approvedSignUpRequestsByAdmin = async (req, res) => {
   try {
-    
-    const {_id : userId} = req.user;
+    const { _id: userId } = req.user;
     console.log("Admin ID:", userId);
-    
+
     const { requestIds, remarks } = req.body;
     // Validate input
     if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Please provide at least one user ID."
-      });
-    }
-    
-    if(!remarks){
-      return res.status(400).json({
-        success: false,
-        message: "Remarks is required."
+        message: "Please provide at least one user ID.",
       });
     }
 
-       // Validate ObjectId format
+    if (!remarks) {
+      return res.status(400).json({
+        success: false,
+        message: "Remarks is required.",
+      });
+    }
+
+    const remarksRegex = /^[A-Za-z\s]{8,200}$/;
+
+    if (!remarksRegex.test(remarks)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Remarks must be alphabetic and 8–200 characters long."
+      });
+    }
+
+    // Validate ObjectId format
     for (let id of requestIds) {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({
           success: false,
-          message: `Invalid requestId`
+          message: `Invalid requestId`,
         });
       }
     }
@@ -208,29 +214,32 @@ const approvedSignUpRequestsByAdmin = async (req, res) => {
 
     // Update users in bulk
     const result = await User.updateMany(
-      { _id: { $in: requestIds } }, 
-      { 
-        $set: { 
-          status: "Approved", 
+      { _id: { $in: requestIds } },
+      {
+        $set: {
+          status: "Approved",
           remarks: remarks,
           actionedBy: userId,
-          actionedAt : new Date()
-        } 
+          actionedAt: new Date(),
+        },
       }
     );
-    
+
     return res.status(200).json({
       success: true,
-       message: `${result.modifiedCount > 1 ? `${result.modifiedCount} requests` : `${result.modifiedCount} request`} approved successfully.`,
+      message: `${
+        result.modifiedCount > 1
+          ? `${result.modifiedCount} requests`
+          : `${result.modifiedCount} request`
+      } approved successfully.`,
     });
-    
   } catch (error) {
     console.error("Bulk approval error:", error);
-    
+
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -239,32 +248,41 @@ const approvedSignUpRequestsByAdmin = async (req, res) => {
 
 const rejectedSignUpRequestsByAdmin = async (req, res) => {
   try {
-
     const user = req.user;
     console.log("Admin ID:", user);
-    
+
     const { requestIds, remarks } = req.body;
     // Validate input
     if (!requestIds || !Array.isArray(requestIds) || requestIds.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "Please provide at least one user ID."
+        message: "Please provide at least one user ID.",
       });
     }
 
-    if(!remarks){
-        return res.status(400).json({
+    if (!remarks) {
+      return res.status(400).json({
         success: false,
-        message: "Remarks is required."
+        message: "Remarks is required.",
       });
     }
 
-      // Validate ObjectId format
+    const remarksRegex = /^[A-Za-z\s]{8,200}$/;
+
+    if (!remarksRegex.test(remarks)) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Remarks must be alphabetic and 8–200 characters long."
+      });
+    }
+
+    // Validate ObjectId format
     for (let id of requestIds) {
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({
           success: false,
-          message: `Invalid requestId`
+          message: `Invalid requestId`,
         });
       }
     }
@@ -280,52 +298,53 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
 
     // Update users in bulk
     const result = await User.updateMany(
-      { _id: { $in: requestIds } }, 
-      { 
-        $set: { 
-          status: "Rejected", 
+      { _id: { $in: requestIds } },
+      {
+        $set: {
+          status: "Rejected",
           remarks: remarks,
           actionedBy: user.userId,
-          actionedAt : new Date()
-        } 
+          actionedAt: new Date(),
+        },
       }
     );
 
     return res.status(200).json({
       success: true,
-      message: `${result.modifiedCount > 1 ? `${result.modifiedCount} requests` : `${result.modifiedCount} request`} rejected successfully.`,
+      message: `${
+        result.modifiedCount > 1
+          ? `${result.modifiedCount} requests`
+          : `${result.modifiedCount} request`
+      } rejected successfully.`,
     });
-
   } catch (error) {
     console.error("Bulk approval error:", error);
 
     return res.status(500).json({
       success: false,
       message: "Internal server error.",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
-
- const getSignUpRequestById = async (req, res) => {
+const getSignUpRequestById = async (req, res) => {
   try {
     const { id } = req.params;
 
+    // Validate ObjectId format
 
-         // Validate ObjectId format
-    
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({
-          success: false,
-          message: `Invalid requestId`
-        });
-      }
-    
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({
+        success: false,
+        message: `Invalid requestId`,
+      });
+    }
 
     // Correct way to find by ID
-    const signupRequest = await User.findById(id).select("-currentToken -password");
-
+    const signupRequest = await User.findById(id).select(
+      "-currentToken -password"
+    );
 
     if (!signupRequest) {
       return res.status(404).json({
@@ -339,7 +358,6 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
       message: "SignUp request fetched successfully",
       data: signupRequest,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -349,8 +367,7 @@ const rejectedSignUpRequestsByAdmin = async (req, res) => {
   }
 };
 
-
-export { 
+export {
   getALlUsersByAdmin,
   updateUserByAdmin,
   deleteUserByAdmin,
@@ -358,5 +375,5 @@ export {
   getAllSignUpRequestsByAdmin,
   approvedSignUpRequestsByAdmin,
   rejectedSignUpRequestsByAdmin,
-  getSignUpRequestById
- };
+  getSignUpRequestById,
+};
