@@ -50,7 +50,7 @@ const PublicRoute = ({ children }) => {
   }
 
   if (isAuthenticated) {
-    if (user && user.role === "Admin") {
+    if (user && (user.role === "Admin" || user.role === "Manager")) {
       return <Navigate to="/admin" replace />;
     }
     return <Navigate to="/dashboard" replace />;

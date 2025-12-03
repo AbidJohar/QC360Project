@@ -12,13 +12,13 @@ export default function AdminLayout() {
 
   const adminName = user?.fullName || user?.username || "Admin";
 
-  // Protect admin route: only allow Admin role
+  // Protect admin route: only allow Admin and Manager roles
   useEffect(() => {
     if (!isAuthenticated || !user) {
       navigate("/login");
       return;
     }
-    if (user.role !== "Admin") {
+    if (user.role !== "Admin" && user.role !== "Manager") {
       navigate("/login");
       return;
     }
