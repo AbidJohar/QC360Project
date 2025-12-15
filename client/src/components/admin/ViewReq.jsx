@@ -80,8 +80,8 @@ export default function ViewReq() {
       return;
     }
 
-    if (remarks.trim().length < 10) {
-      toast.error("Remarks must be at least 10 characters");
+    if (remarks.trim().length < 8) {
+      toast.error("Remarks must be at least 8 characters");
       return;
     }
 
@@ -186,8 +186,8 @@ export default function ViewReq() {
       return;
     }
 
-    if (modalRemarks.trim().length < 10) {
-      toast.error("Remarks must be at least 10 characters");
+    if (modalRemarks.trim().length < 8) {
+      toast.error("Remarks must be at least 8 characters");
       return;
     }
 
@@ -345,13 +345,13 @@ export default function ViewReq() {
             disabled={
               actionLoading ||
               selectedRows.size === 0 ||
-              remarks.trim().length < 10
+              remarks.trim().length < 8
             }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
-                : remarks.trim().length < 10
-                ? "Remarks must be at least 10 characters"
+                : remarks.trim().length < 8
+                ? "Remarks must be at least 8 characters"
                 : ""
             }
           >
@@ -363,13 +363,13 @@ export default function ViewReq() {
             disabled={
               actionLoading ||
               selectedRows.size === 0 ||
-              remarks.trim().length < 10
+              remarks.trim().length < 8
             }
             title={
               selectedRows.size === 0
                 ? "Please select at least one request"
-                : remarks.trim().length < 10
-                ? "Remarks must be at least 10 characters"
+                : remarks.trim().length < 8
+                ? "Remarks must be at least 8 characters"
                 : ""
             }
           >
@@ -450,7 +450,7 @@ export default function ViewReq() {
                 disabled={
                   modalActionLoading ||
                   !modalRemarks.trim() ||
-                  modalRemarks.trim().length < 50
+                  modalRemarks.trim().length < 8
                 }
               >
                 {modalActionLoading ? "Processing..." : "Approve"}
@@ -461,7 +461,7 @@ export default function ViewReq() {
                 disabled={
                   modalActionLoading ||
                   !modalRemarks.trim() ||
-                  modalRemarks.trim().length < 50
+                  modalRemarks.trim().length < 8
                 }
               >
                 {modalActionLoading ? "Processing..." : "Reject"}

@@ -54,10 +54,27 @@ const SignUp = () => {
         formData.password,
         formData.role
       );
-      // Show success toast/message and redirect appropriately.
-      setSuccessMessage("Signup successful. Redirecting...");
-      toast.success("Signup successful!");
-      // Let PublicRoute handle the redirect based on role
+
+      // Check if user needs admin approval
+      if (res.user && res.user.status === "Submitted") {
+        setSuccessMessage(
+          `Signup successful! Your request has been submitted for admin approval. Please wait for approval before logging in.`
+        );
+        toast.info("Your signup is pending admin approval. Please wait...", {
+          autoClose: 5000,
+        });
+        // Redirect to login after a delay
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      } else {
+        // User is auto-authenticated (Admin or already approved)
+        setSuccessMessage("Signup successful. Redirecting to dashboard...");
+        toast.success("Signup successful!");
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
+      }
     } catch (error) {
       const errorMessage = error.message || "Signup failed. Please try again.";
 
