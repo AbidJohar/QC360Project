@@ -58,12 +58,18 @@ export const AuthProvider = ({ children }) => {
       });
       const { accessToken, user } = response.data;
 
-      if (user && (user.role === "Admin" || user.role === "Manager")) {
+      // Only authenticate if user is Admin (always approved) or if status is Approved
+      if (user && (user.role === "Admin" || user.status === "Approved")) {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
         setIsAuthenticated(true);
         startLogoutTimer();
+      } else if (user) {
+        // Store user info but don't authenticate - they're waiting for approval
+        localStorage.setItem("user", JSON.stringify(user));
+        setUser(user);
+        setIsAuthenticated(false);
       }
       return response.data;
     } catch (error) {
